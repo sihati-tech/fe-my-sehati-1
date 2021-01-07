@@ -1,0 +1,25 @@
+.login {
+  width: 100%;
+  &__header {
+    height: 70px;
+    background-color: aliceblue;
+  }
+  &__image {
+    text-align: center;
+  }
+  &__body {
+    height: calc(100% - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &__submit {
+    cursor: pointer;
+  }
+  &__form {
+    width: 400px;
+    height: 400px;
+    padding: 20px;
+    box-shadow: 2px 2px 10px #d8d8d8;
+  }
+}

@@ -1,0 +1,1 @@
+export const LIST_PATIENTS = 'list_patients';

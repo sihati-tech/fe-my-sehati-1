@@ -64,9 +64,22 @@
 }
 
 // override 
-
+.MuiTabs-root{
+  background-color: #d7eeff;
+}
 .MuiAccordionDetails-root {
 }
 .MuiAccordionSummary-root {
   background-color: aliceblue !important;
+}
+.btn-action {
+  width: fit-content;
+  position: absolute;
+  right: 0;
+    font-weight: bold;
+    cursor: pointer;
+    &:hover {
+      color: #114a8b;
+      text-decoration: underline;
+    }
 }

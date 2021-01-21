@@ -35,6 +35,22 @@
       font-size: 12px;
     }
   }
+  &__desc-clickable {    
+    width: 70%;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 2px black;
+    padding: 5px;
+    color: #114a8b;
+    text-decoration: underline;
+    cursor: pointer;
+    @media (max-width: 767px) {    
+      padding: 3px;
+      font-size: 12px;
+    }
+    &:hover {
+      background-color: #ececec;
+    }
+  }
   &__last-line-desc {
     width: 50%;
     padding: 5px;

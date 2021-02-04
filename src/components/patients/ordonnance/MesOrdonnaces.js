@@ -4,8 +4,12 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
-import { FaAngleDown, FaCheckCircle, FaCalendarPlus} from 'react-icons/fa';
-
+import { FaAngleDown, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
+import {
+  BrowserRouter as Router,
+  useParams
+} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
@@ -140,8 +144,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MesOrdonnaces() {
-
-
+  let { id } = useParams();
+  const history = useHistory()
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [value, setValue] = React.useState(0);
@@ -164,10 +168,19 @@ export default function MesOrdonnaces() {
     setConsultationList(filteredData)
   };
 
+  function goBack() {
+    navigateTo('/patient/user/' + id)
+  }
+  function navigateTo (url) {
+    history.push(url);
+  }
   return (
     <div className="container-wrapper">
       <HeaderComponent></HeaderComponent>
       <div className="container-body">
+      <div className="container-return-action"  onClick={(e) => goBack()}>
+        <FaArrowLeft>  </FaArrowLeft> retourner à mon tableau de bord
+      </div>
         <div className="container-title">
           Mes Ordonnances
         </div>

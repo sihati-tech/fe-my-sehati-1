@@ -4,8 +4,12 @@ import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import Typography from '@material-ui/core/Typography';
-import { FaAngleDown, FaCheckCircle, FaCalendarPlus} from 'react-icons/fa';
-
+import { FaAngleDown, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
+import {
+  BrowserRouter as Router,
+  useParams
+} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
@@ -29,6 +33,8 @@ const mockData =  [
     acte_medical: 'ACT-345 445',
     date_RDV: '11/22/2222',
     date: '11/22/1111',
+    dateDebut: '1/1/2021',
+    dateFin: '1/1/2021',
     consultation_date: '22/22/2222'
   },
   {
@@ -42,6 +48,8 @@ const mockData =  [
     acte_medical: 'ACT-345 445',
     date_RDV: '11/22/2222',
     date: '11/22/1111',
+    dateDebut: '1/1/2021',
+    dateFin: '1/1/2021',
     consultation_date: '22/22/2222'
   },
   {
@@ -55,6 +63,8 @@ const mockData =  [
     acte_medical: 'ACT-345 445',
     date_RDV: '11/22/2222',
     date: '11/22/1111',
+    dateDebut: '1/1/2021',
+    dateFin: '1/1/2021',
     consultation_date: '22/22/2222'
   }
 ]
@@ -75,6 +85,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MesTraitements() {
 
+  let { id } = useParams();
+  const history = useHistory()
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [value, setValue] = React.useState(0);
@@ -97,10 +109,20 @@ export default function MesTraitements() {
     setConsultationList(filteredData)
   };
 
+  function goBack() {
+    navigateTo('/patient/user/' + id)
+  }
+  function navigateTo (url) {
+    history.push(url);
+  }
   return (
     <div className="container-wrapper">
       <HeaderComponent></HeaderComponent>
       <div className="container-body">
+
+      <div className="container-return-action"  onClick={(e) => goBack()}>
+        <FaArrowLeft>  </FaArrowLeft> retourner à mon tableau de bord
+      </div>
         <div className="container-title">
           Mes Traitements
         </div>
@@ -167,6 +189,8 @@ export default function MesTraitements() {
                     <div  className="lines__line"> <div className="lines__title">date de consultation</div><div className="lines__desc">{consultation.consultation_date}</div></div>
                     <div  className="lines__line"> <div className="lines__title">date prise de RDV</div><div className="lines__desc">{consultation.date_RDV}</div></div>
                     <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{consultation.date}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date debut</div><div className="lines__desc">{consultation.dateDebut}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date fin</div><div className="lines__desc">{consultation.dateFin}</div></div>
                     <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc">{consultation.consultation_comment}</textarea></div>
                     
         

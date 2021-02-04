@@ -12,6 +12,19 @@
   overflow: auto;
   height: calc(100% - 55px);
 }
+.container-return-action{
+  margin: 7px 5px;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    &:hover {
+      color: #114a8b;
+      text-decoration: underline;
+    }
+
+}
 .container-title {
   margin: 20px 5px;
   padding: 10px 0;

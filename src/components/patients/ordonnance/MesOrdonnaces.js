@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -9,12 +9,15 @@ import {
   BrowserRouter as Router,
   useParams
 } from "react-router-dom";
+import axiosInstance from '../../../services/httpInterceptor' 
 import { useHistory } from "react-router-dom";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 
+import OrdonnaceAdd from './OrdonnaceAdd'
 import "./mesOrdonnaces.scss";
 import HeaderComponent from '../header/headerComponent'
+const API_URL = process.env.REACT_APP_URL;
 
 const StatusMapping = {
   0: 'Done',
@@ -25,12 +28,12 @@ const mockData =  [
   {
     id: 11,
     type: 'Generalist',
-    consultation: 'Cons 22339-49403-439430',
+    ordonnance: 'Cons 22339-49403-439430',
     price: '22$',
     status: 'InProgress',
     date: '11/02/2020',
     doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
+    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
     consultation_name: 'CONS 34424',
     consultation_comment: 'comment ...',
     consultation_date: '11/02/2020',
@@ -40,12 +43,12 @@ const mockData =  [
   {
     id: 12,
     type: 'Generalist',
-    consultation: 'Cons 22339-49403-439430',
+    ordonnance: 'Cons 22339-49403-439430',
     price: '45$',
     status: 'InProgress',
     date: '11/02/2020',
     doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
+    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
     consultation_name: 'CONS 34424',
     consultation_comment: 'comment ...',
     consultation_date: '11/02/2020',
@@ -55,12 +58,12 @@ const mockData =  [
   {
     id: 13,
     type: 'Generalist',
-    consultation: 'Cons 22339-49403-439430',
+    ordonnance: 'Cons 22339-49403-439430',
     price: '45$',
     status: 'Later',
     date: '11/02/2020',
     doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
+    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
     consultation_name: 'CONS 34424',
     consultation_comment: 'comment ...',
     consultation_date: '11/02/2020',
@@ -70,12 +73,12 @@ const mockData =  [
   {
     id: 14,
     type: 'Generalist',
-    consultation: 'Cons 22339-49403-439430',
+    ordonnance: 'Cons 22339-49403-439430',
     price: '45$',
     status: 'Done',
     date: '11/02/2020',
     doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
+    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
     consultation_name: 'CONS 34424',
     consultation_comment: 'comment ...',
     consultation_date: '11/02/2020',
@@ -85,12 +88,12 @@ const mockData =  [
   {
     id: 15,
     type: 'Specialist',
-    consultation: 'Cons 22339-49403-439430',
+    ordonnance: 'Cons 22339-49403-439430',
     price: '45$',
     status: 'InProgress',
     date: '11/02/2020',
     doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
+    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
     consultation_name: 'CONS 34424',
     consultation_comment: 'comment ...',
     consultation_date: '11/02/2020',
@@ -100,12 +103,12 @@ const mockData =  [
   {
     id: 16,
     type: 'Specialist',
-    consultation: 'Cons 22339-49403-439430',
+    ordonnance: 'Cons 22339-49403-439430',
     price: '45$',
     status: 'Later',
     date: '11/02/2020',
     doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
+    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
     consultation_name: 'CONS 34424',
     consultation_comment: 'comment ...',
     consultation_date: '11/02/2020',
@@ -115,12 +118,12 @@ const mockData =  [
   {
     id: 17,
     type: 'Specialist',
-    consultation: 'Cons 22339-49403-439430',
+    ordonnance: 'Cons 22339-49403-439430',
     price: '45$',
     status: 'Done',
     date: '11/02/2020',
     doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
+    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
     consultation_name: 'CONS 34424',
     consultation_comment: 'comment ...',
     consultation_date: '11/02/2020',
@@ -150,7 +153,24 @@ export default function MesOrdonnaces() {
   const [expanded, setExpanded] = React.useState(false);
   const [value, setValue] = React.useState(0);
   const [filter, setFilter] = React.useState('Generalist');
-  const [consultationList, setConsultationList] = React.useState([]);
+  const [ordonnanceList, setConsultationList] = React.useState([]);
+
+  const [ordonnance, setOrdonnance] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
+
+  useEffect( () => {
+    const url = `${API_URL}/benificiares/${id}` ;
+    axiosInstance.get(url).then(response => response.data)
+    .then((result) => { 
+      const benif = result[0];
+      setFirstName(benif.first_name)
+      setLastName(benif.last_name)
+    }
+    );
+  }, []);
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
@@ -174,9 +194,36 @@ export default function MesOrdonnaces() {
   function navigateTo (url) {
     history.push(url);
   }
+
+  function refreshList () {
+    const url = `${API_URL}/benificiares/${id}/ordonnances`;
+    axiosInstance.get(url).then(response => response.data)
+    .then((result) => {
+      setConsultationList(result)
+      }
+    );
+  }
+  function addOrdonnance() {
+    setOrdonnance({})
+    setIsOpen(true)
+  }
+  function onChange(value) { 
+    setIsOpen(false) 
+    refreshList();
+  }
   return (
     <div className="container-wrapper">
       <HeaderComponent></HeaderComponent>
+
+      {
+        isOpen ? 
+        <OrdonnaceAdd
+          onChange={onChange}
+          isOpen={isOpen}
+          benif= {ordonnance}
+          ></OrdonnaceAdd>
+      : null
+      }
       <div className="container-body">
       <div className="container-return-action"  onClick={(e) => goBack()}>
         <FaArrowLeft>  </FaArrowLeft> retourner à mon tableau de bord
@@ -185,12 +232,12 @@ export default function MesOrdonnaces() {
           Mes Ordonnances
         </div>
         <div className="container-subtitle">
-          liste des ordonnance pour Mr XXXX XXXX planifiés
+          liste des ordonnance pour Mr {firstName} {lastName}  planifiés
         </div>
       
 
         <div className="container-right-actions">
-          <div className="btn-action"> <FaCalendarPlus>  </FaCalendarPlus>Prendre RDV</div>
+          <div className="btn-action" onClick={(e) => addOrdonnance()}> <FaCalendarPlus>  </FaCalendarPlus>Add Ordonnance</div>
         </div>
         <div className="container-filters-top">
           <div className={filter === 'Generalist' ? "container-filter-top-actif" : "container-filter-top" }
@@ -223,40 +270,44 @@ export default function MesOrdonnaces() {
         </Tabs>
       <div className={classes.root}>
         {
-          consultationList.map((consultation, index) => {
+          ordonnanceList.map((ordonnance, index) => {
             return (
-              <Accordion expanded={expanded === consultation.id} onChange={handleChange(consultation.id)}>
+              <Accordion expanded={expanded === ordonnance.id} onChange={handleChange(ordonnance.id)}>
                 <AccordionSummary
                   expandIcon={<FaAngleDown />}
                   aria-controls="panel1bh-content"
                   id="panel1bh-header"
                 >
-                  <Typography className='accordion__title'>{consultation.date}</Typography>
-                  <Typography className='accordion__subtitle'>{consultation.type}: {consultation.doctor_name}</Typography>
+                  <Typography className='accordion__title'>{ordonnance.date}</Typography>
+                  <Typography className='accordion__subtitle'>{ordonnance.type}: {ordonnance.doctor_name}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                 <div>
         
                 <Typography className="padding2">
-                {consultation.note}
+                {ordonnance.note}
                   </Typography> 
                   <div  className="lines">
-                    <div  className="lines__line"> <div className="lines__title">nom</div><div className="lines__desc">{consultation.consultation_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc-clickable">{consultation.doctor_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Consultation</div><div className="lines__desc-clickable">{consultation.consultation}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date de consultation</div><div className="lines__desc">{consultation.consultation_date}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prise de RDV</div><div className="lines__desc">{consultation.consultation_RDV}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{consultation.date}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{consultation.price}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">nom</div><div className="lines__desc">{ordonnance.consultation_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc-clickable">{ordonnance.doctor_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Consultation</div><div className="lines__desc-clickable">{ordonnance.ordonnance}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date de ordonnance</div><div className="lines__desc">{ordonnance.consultation_date}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date prise de RDV</div><div className="lines__desc">{ordonnance.consultation_RDV}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{ordonnance.date}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{ordonnance.price}</div></div>
                     <div  className="lines__line"> <div className="lines__title">document</div> 
                     <div>
-                      {consultation.attachement.map(item => {
+                      {ordonnance.attachement.map(item => {
                         return (<div> {item} </div>);
                       })}
                     </div>
                     </div>
-                    <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc">{consultation.consultation_comment}</textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc">{ordonnance.consultation_comment}</textarea></div>
                     
+                    <div  className="lines__footer"> 
+                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
+                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Editer</div>
+                    </div>
                   </div>
                 </div>
                 </AccordionDetails>

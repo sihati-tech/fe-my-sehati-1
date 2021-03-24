@@ -16,6 +16,15 @@
   &__last-line {
     
   }
+  &__footer {
+    display: flex;
+    margin: 20px;
+    justify-content: center;
+  }
+  &__footer-action {
+    margin: 5px 10px;    
+    cursor: pointer;
+  }
   &__title {
     width: 30%;
     padding: 5px;
@@ -108,5 +117,18 @@
     display: flex;
     justify-content: space-around;
     margin: 10px;
+  }
+}
+.graph-button{
+  cursor: pointer;
+}
+.graph{
+  &__header{
+    
+  }
+  &__body{
+    margin: auto;
+    width: 80%;
+    height: 200px;
   }
 }

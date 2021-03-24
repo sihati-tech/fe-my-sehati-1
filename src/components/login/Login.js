@@ -25,12 +25,11 @@ export default function Login() {
   }
 
   function login() {
-    //const url = `${API_URL}/login`;
-    const url = 'http://localhost:4000/login'
+    const url = `${API_URL}/login`;
+    // const url = 'http://localhost:4000/login'
     const data = {username: email, password}
     axios.post(url, data).then(response => response.data)
     .then((result) => {
-      console.log('result ', result)
       localStorage.setItem('token', result.token);
       localStorage.setItem('refreshToken', result.refreshToken);
       localStorage.setItem('userType', JSON.stringify(result.user_type));

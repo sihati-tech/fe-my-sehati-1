@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -9,6 +9,9 @@ import {
   BrowserRouter as Router,
   useParams
 } from "react-router-dom";
+import axiosInstance from '../../../services/httpInterceptor' 
+
+import TraitementAdd from './TraitementAdd'
 import { useHistory } from "react-router-dom";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -16,6 +19,7 @@ import Tab from '@material-ui/core/Tab';
 import "./mesTraitements.scss";
 import HeaderComponent from '../header/headerComponent'
 
+const API_URL = process.env.REACT_APP_URL;
 const StatusMapping = {
   0: 'Done',
   1: 'InProgress',
@@ -93,6 +97,9 @@ export default function MesTraitements() {
   const [filter, setFilter] = React.useState('Generalist');
   const [consultationList, setConsultationList] = React.useState([]);
 
+  const [traitement, setTraitement] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
     const filteredData = mockData.filter(data => 
@@ -115,9 +122,35 @@ export default function MesTraitements() {
   function navigateTo (url) {
     history.push(url);
   }
+  function refreshList () {
+    const url = `${API_URL}/benificiares/${id}/traitements`;
+    axiosInstance.get(url).then(response => response.data)
+    .then((result) => {
+      setConsultationList(result)
+      }
+    );
+  }
+  function addTraitement() {
+    setTraitement({})
+    setIsOpen(true)
+  }
+  function onChange(value) { 
+    setIsOpen(false) 
+    refreshList();
+  }
   return (
     <div className="container-wrapper">
       <HeaderComponent></HeaderComponent>
+
+      {
+        isOpen ? 
+        <TraitementAdd
+          onChange={onChange}
+          isOpen={isOpen}
+          benif= {traitement}
+          ></TraitementAdd>
+      : null
+      }
       <div className="container-body">
 
       <div className="container-return-action"  onClick={(e) => goBack()}>
@@ -132,7 +165,7 @@ export default function MesTraitements() {
       
 
         <div className="container-right-actions">
-          <div className="btn-action"> <FaCalendarPlus>  </FaCalendarPlus>Prendre RDV</div>
+        <div className="btn-action" onClick={(e) => addTraitement()}> <FaCalendarPlus>  </FaCalendarPlus>Add Traitement</div>
         </div>
         <div className="container-filters-top">
           <div className={filter === 'Generalist' ? "container-filter-top-actif" : "container-filter-top" }
@@ -197,6 +230,12 @@ export default function MesTraitements() {
                     <div  className="lines__line"> 
                       <div className="lines__title">status</div>
                       <div className="lines__last-line-desc"> {consultation.status}</div>
+                    </div>
+
+
+                    <div  className="lines__footer"> 
+                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
+                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Editer</div>
                     </div>
                   </div>
                 </div>

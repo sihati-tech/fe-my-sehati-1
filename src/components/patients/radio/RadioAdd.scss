@@ -1,0 +1,106 @@
+
+.modal{
+  &__header{
+      &-title{
+        padding: 15px 28px;
+        font-weight: 600;
+        font-size: 15px;
+      }
+      &-close{
+
+      }
+  }
+  &__body{
+      height: calc(100% - 130px);
+      &-description{
+          color: #9d9d9d;
+          padding: 0 28px 20px 28px;
+          @media (max-width: 767px) {
+              font-size: 10px;
+          }
+      }
+      &--input{
+        padding: 0px 15px;
+          display: grid;
+          &-label{
+            font-size: 12px;
+            margin-bottom: 0px;
+          }
+          &-input{
+            height: 30px;
+            width: 100%;
+            padding-left: 10px;
+            position: relative;
+            font-size: 12px;
+          }
+          &-inputDesc{
+            height: 30px;
+              width: 100%;
+              padding-left: 10px;
+              position: relative;
+              font-size: 20px;
+          }
+          &-container{
+              height: 35px;
+              position: relative;
+          }
+      }
+      &-comment{
+
+      }
+
+  }
+  &__footer{
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      &-close{
+
+      }
+
+  }
+  &__button{
+    cursor: pointer;
+    overflow: auto;
+    margin: 5px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 0 0 #0b839b;
+    background-color: #0fa6c4;
+    color: #fafafa;
+    font-weight: 700;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    padding: 10px;
+    width: 100px;
+    text-align: center;
+    &:hover {
+      background-color: #0fa6c4c4;;
+    }
+  }
+}
+.ReactModal__Overlay--after-open {
+  background-color: rgba(37, 40, 42, 0.7) !important;
+  z-index: 1;
+}
+.MuiInputBase-root {
+    height: 30px;
+  }
+
+  .MuiFormControl-marginNormal {
+    margin-top: 0px !important;
+    margin-bottom: 8px;
+}
+
+.content-modal {
+  height: 300px;
+  overflow: scroll; 
+  @media (max-width: 767px) {
+      height: 260px;
+  }
+}
+.footer-modal {
+  height: 75px;
+  justify-content: space-evenly;
+  display: flex;
+}

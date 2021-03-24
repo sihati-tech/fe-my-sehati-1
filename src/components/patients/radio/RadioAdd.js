@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 import axiosInstance from '../../../services/httpInterceptor' 
-import "./BenifAdd.scss";
+import "./RadioAdd.scss";
 const customStyles = {
   content : {
     top                   : '50%',
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-export default function BenifAdd(props) {
+export default function ConsultationAdd(props) {
   const [firstName, setFirstName] = useState(props.benif.first_name);
   const [lastName, setLastName] = useState(props.benif.last_name);
   const [birthDate, setBirthDate] = useState(props.benif.birth_date);
@@ -98,7 +98,7 @@ export default function BenifAdd(props) {
           <div className="modal__header">
             <div className="modal__header-title">
               {
-              !props.benif._id ? 'Nouveau bénificiare' : 'Mise à jour du bénificiare'
+              !props.benif._id ? 'Nouveau Radio' : `Mise à jour du Radio`
               }
             </div>
             <div className="modal__header-close">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -9,11 +9,14 @@ import {
   BrowserRouter as Router,
   useParams
 } from "react-router-dom";
+import axiosInstance from '../../../services/httpInterceptor' 
 import { useHistory } from "react-router-dom";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import "./mesConsultations.scss";
 import HeaderComponent from '../header/headerComponent'
+import ConsultationAdd from './ConsultationAdd'
+const API_URL = process.env.REACT_APP_URL;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -141,6 +144,23 @@ export default function MesConsultations() {
   const [filter, setFilter] = React.useState('Generalist');
   const [consultationList, setConsultationList] = React.useState([]);
 
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
+  const [consultation, setConsultation] = useState({});
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect( () => {
+    const url = `${API_URL}/benificiares/${id}` ;
+    axiosInstance.get(url).then(response => response.data)
+    .then((result) => { 
+      const benif = result[0];
+      setFirstName(benif.first_name)
+      setLastName(benif.last_name)
+    }
+    );
+  }, []);
+
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
     const filteredData = mockData.filter(data => 
@@ -163,23 +183,51 @@ export default function MesConsultations() {
   function navigateTo (url) {
     history.push(url);
   }
+
+  function addConsultation() {
+    setConsultation({})
+    setIsOpen(true)
+  }
+  
+  function refreshList () {
+    const url = `${API_URL}/benificiares/${id}/consultations`;
+    axiosInstance.get(url).then(response => response.data)
+    .then((result) => {
+      setConsultationList(result)
+      }
+    );
+  }
+  function onChange(value) { 
+    setIsOpen(false) 
+    refreshList();
+  }
   return (
     <div className="container-wrapper">
       <HeaderComponent></HeaderComponent>
+      {
+        isOpen ? 
+        <ConsultationAdd
+          onChange={onChange}
+          isOpen={isOpen}
+          benif= {consultation}
+          ></ConsultationAdd>
+      : null
+      }
       <div className="container-body">
       <div className="container-return-action"  onClick={(e) => goBack()}>
         <FaArrowLeft>  </FaArrowLeft> retourner à mon tableau de bord
       </div>
         <div className="container-title">
-          Mes Consultations
+          Mes Consultations 
         </div>
         <div className="container-subtitle">
-          liste des Consultations pour Mr XXXX XXXX planifiés
+          liste des Consultations pour  <b>Mr {firstName} {lastName}  </b>planifiés
         </div>
       
 
         <div className="container-right-actions">
           <div className="btn-action"> <FaCalendarPlus>  </FaCalendarPlus>Prendre RDV</div>
+          <div className="btn-action" onClick={(e) => addConsultation()}> <FaCalendarPlus>  </FaCalendarPlus>Add Consultation</div>
         </div>
         <div className="container-filters-top">
           <div className={filter === 'Generalist' ? "container-filter-top-actif" : "container-filter-top" }
@@ -238,10 +286,14 @@ export default function MesConsultations() {
                     <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{consultation.price}</div></div>
                     <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc">{consultation.consultation_comment}</textarea></div>
                     
-        
                     <div  className="lines__line"> 
                       <div className="lines__title">status</div>
                       <div className="lines__last-line-desc"> {consultation.status}</div>
+                    </div>
+
+                    <div  className="lines__footer"> 
+                      <div className="lines__footer-action" onClick={(e) => addConsultation()}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
+                      <div className="lines__footer-action" onClick={(e) => addConsultation()}> <FaCalendarPlus>  </FaCalendarPlus>Editer</div>
                     </div>
                   </div>
                 </div>

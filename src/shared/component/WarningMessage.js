@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from 'react-modal';
+
+import axiosInstance from '../../services/httpInterceptor' 
 import "./WarningMessage.scss";
 const customStyles = {
   content : {
@@ -19,6 +21,7 @@ const customStyles = {
   }
 };
 
+const API_URL = process.env.REACT_APP_URL;
 const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(1, 0, 0),
@@ -31,7 +34,11 @@ export default function WarningMessage(props) {
     props.onCloseWarning(true);
   }
   function onConfirm() {
-    props.onConfirm(true);
+    const url = `${API_URL}/benificiares/${props.deleteBenifState}`;
+    axiosInstance.delete(url).then(response => response.data)
+    .then((result) => {
+      props.onConfirm(true);
+    });
   }
 
   return (

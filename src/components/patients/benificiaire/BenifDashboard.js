@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   useParams
@@ -9,6 +9,7 @@ import Badge from '@material-ui/core/Badge';
 
 import { FaEnvelope} from 'react-icons/fa';
 import { useHistory } from "react-router-dom";
+import axiosInstance from '../../../services/httpInterceptor' 
 import Logo1 from '../../../assets/images/logo1.png';
 import Logo2 from '../../../assets/images/logo2.png';
 import Logo3 from '../../../assets/images/logo3.png';
@@ -18,14 +19,25 @@ import Logo6 from '../../../assets/images/logo6.png';
 import Logo7 from '../../../assets/images/logo7.png';
 import Logo8 from '../../../assets/images/logo8.png';
 
+const API_URL = process.env.REACT_APP_URL;
 
 export default function BenifDashboard() {
 
       const history = useHistory()
       let { id } = useParams();
 
+      const [firstName, setFirstName] = useState('');
+      const [lastName, setLastName] = useState('');
+
       useEffect( () => {
-        console.log('start benif ', id)
+        const url = `${API_URL}/benificiares/${id}` ;
+        axiosInstance.get(url).then(response => response.data)
+        .then((result) => { 
+          const benif = result[0];
+          setFirstName(benif.first_name)
+          setLastName(benif.last_name)
+        }
+        );
       }, []);
 
 
@@ -37,7 +49,7 @@ return (
   <HeaderComponent></HeaderComponent>
   <div className="container-body">
     <div className="container-title">Bienvenue dans votre tableau de bord</div>
-  <div className="container-subtitle">id de patient : {id}</div>
+  <div className="container-subtitle">Mr : {firstName} {lastName}</div>
 
         <div className="container-widget-line">
           <div className="container-widget" onClick={(e) => navigateTo(id + '/consultations')}>

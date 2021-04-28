@@ -19,6 +19,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import WarningMessage from '../../../shared/component/WarningMessage'
 
 import axiosInstance from '../../../services/httpInterceptor' 
 import AnalyseAdd from './AnalyseAdd'
@@ -162,8 +163,24 @@ export default function MesAnalyses() {
   const [value, setValue] = React.useState(0);
   const [consultationList, setConsultationList] = React.useState([]);
 
+  const [isOpenWarning, setIsOpenWarning] = useState(false);
   const [analyse, setAnalyse] = useState({});
   const [isOpenAdd, setIsOpenAdd] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
+  useEffect( () => {
+    const url = `${API_URL}/benificiares/${id}` ;
+    axiosInstance.get(url).then(response => response.data)
+    .then((result) => { 
+      const benif = result[0];
+      setFirstName(benif.first_name)
+      setLastName(benif.last_name)
+    }
+    );
+    refreshList();
+  }, []);
+
 
   const handleChangeTab = (event, newValue) => {
     console.log('newValue ', newValue, StatusMapping[newValue] )
@@ -191,9 +208,10 @@ export default function MesAnalyses() {
     setIsOpen(false) 
   }
   function refreshList () {
-    const url = `${API_URL}/benificiares/${id}/analyses`;
+    const url = `${API_URL}/analyses/benif/${id}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
+      console.log('result')
       setConsultationList(result)
       }
     );
@@ -206,6 +224,34 @@ export default function MesAnalyses() {
     setIsOpenAdd(false) 
     refreshList();
   }
+  function supprimerAnalyse(analyse) {
+    setAnalyse(analyse)
+    setIsOpenWarning(true)
+  }
+  function editAnalyse(analyse) {
+    setAnalyse(analyse)
+    setIsOpenAdd(true)
+  }
+  function downloadFile(file) {
+    console.log('file ', file)
+    const url = `${API_URL}/file/download`;
+    axiosInstance.post(url, file).then(response => response.data)
+    .then((result) => {  }
+    );
+  }
+  function onCloseWarning(value) { 
+    setIsOpenWarning(false)
+  }
+  function onConfirm(value) { 
+    setIsOpenWarning(false);
+    const url = `${API_URL}/analyses/${analyse._id}`;
+    axiosInstance.delete(url).then(response => response.data)
+    .then((result) => {
+      refreshList()
+      }
+    );
+    refreshList()
+  }
   return (
     <div className="container-wrapper">
       <HeaderComponent></HeaderComponent>
@@ -214,7 +260,8 @@ export default function MesAnalyses() {
         <AnalyseAdd
           isOpen={isOpenAdd}
           onChange={onChangeAdd}
-          benif= {analyse}
+          analyse= {analyse}
+          benif= {id}
           ></AnalyseAdd>
       : null
       }
@@ -226,6 +273,11 @@ export default function MesAnalyses() {
           ></MesGraph>
       : null
       }
+      <WarningMessage 
+              onCloseWarning={onCloseWarning}
+              isOpenWarning={isOpenWarning}
+              onConfirm={onConfirm}>
+          </WarningMessage>
       <div className="container-body">
       <div className="container-return-action"  onClick={(e) => goBack()}>
         <FaArrowLeft>  </FaArrowLeft> retourner à mon tableau de bord
@@ -234,7 +286,7 @@ export default function MesAnalyses() {
           Mes Analyses
         </div>
         <div className="container-subtitle">
-          liste des Analyses pour Mr XXXX XXXX planifiés
+          liste des Analyses pour Mr {firstName} {lastName}  planifiés
         </div>
       
 
@@ -253,106 +305,82 @@ export default function MesAnalyses() {
         </Tabs>
       <div className={classes.root}>
         {
-          consultationList.map((consultation, index) => {
+          consultationList.map((analyse, index) => {
             return (
-              <Accordion expanded={expanded === consultation.id} onChange={handleChange(consultation.id)}>
+              <Accordion expanded={expanded === analyse.id} onChange={handleChange(analyse.id)}>
                 <AccordionSummary
                   expandIcon={<FaAngleDown />}
                   aria-controls="panel1bh-content"
                   id="panel1bh-header"
                 >
-                  <Typography className='accordion__title'>{consultation.date_planned}</Typography>
-                  <Typography className='accordion__subtitle'>{consultation.labo_name}</Typography>
+                  <Typography className='accordion__title'>{analyse.date_rdv}</Typography>
+                  <Typography className='accordion__subtitle'>{analyse.laboratory}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                <div>
+                <div className='all_width'>
         
                 <Typography className="padding2">
-                {consultation.note}
+                {analyse.note}
                   </Typography> 
                   <div  className="lines">
-                    <div  className="lines__line"> <div className="lines__title">Doc Laboratoire</div><div className="lines__desc">{consultation.labo_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Medecin Presc.</div><div className="lines__desc">{consultation.doctor_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Ordonnance</div><div className="lines__desc">{consultation.ordonnance}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Date Ordonnance</div><div className="lines__desc">{consultation.ordonnance}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{consultation.date_planned}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date realisé</div><div className="lines__desc">{consultation.date_realised}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">interpretation Labo</div><div className="lines__desc">{consultation.interpretation_labo}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">interpretation Doc</div><div className="lines__desc">{consultation.interpretation_doctor}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{consultation.price}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc" value={consultation.comment}></textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">Doc Laboratoire</div><div className="lines__desc">{analyse.laboratory}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Medecin Presc.</div><div className="lines__desc">{analyse.ordonnance.consultation.medecin.last_name} {analyse.ordonnance.consultation.medecin.first_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Ordonnance</div><div className="lines__desc">{analyse.ordonnance.ordonnance_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Date Ordonnance</div><div className="lines__desc">{analyse.ordonnance.date_rdv}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{analyse.date_prevu}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date realisé</div><div className="lines__desc">{analyse.date_rdv}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">interpretation Labo</div><div className="lines__desc">{analyse.interpretation_labo}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">interpretation Doc</div><div className="lines__desc">{analyse.interpretation_medecin}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{analyse.price}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc" value={analyse.comment}></textarea></div>
         
                     <div  className="lines__line"> 
                       <div className="lines__title">attachement</div>
-                      <div className="lines__last-line-desc"> {consultation.attachement}</div>
+                      {analyse.attachements.map(item => {
+                        return (<div onClick={(e) => downloadFile(item)}> {item.name} </div>);
+                      })}
                     </div>
 
                     <div className="result__container" >
 
                     <div className="result__title"> Resultat </div>
-                    {
-                      consultation.analyses.map((analyse, index) => {
-                        return (
-                          <div>
-                            <div className="result__category" >{analyse.category}</div>
-                            {
-                              analyse.exams.map((exam, index) => {
-                                return (
-                                  <div>
-                                  <div className="result__exam-name"> {exam.exam_name} </div>
-                                    <div className="result__exam-name-comment"> {exam.comment} </div>
-
-                                    <Table className={classes.table} aria-label="simple table">
-                                      <TableHead>
-                                        <TableRow>
-                                          <TableCell>nom</TableCell>
-                                          <TableCell align="right">valeur</TableCell>
-                                          <TableCell align="right">unité</TableCell>
-                                          <TableCell align="right">reference</TableCell>
-                                          <TableCell align="right">antériorité</TableCell>
-                                          <TableCell align="right"></TableCell>
-                                        </TableRow>
-                                      </TableHead>
-                                      <TableBody>
-                                        {exam.results.map((row) => (
-                                          <TableRow key={row.name}>
-                                            <TableCell align="">{row.label}</TableCell>
-                                            <TableCell align="right">{row.value}</TableCell>
-                                            <TableCell align="right">{row.unit}</TableCell>
-                                            <TableCell align="right">{row.reference_max} - {row.reference_min} </TableCell>
-                                            <TableCell align="right">{row.historique}</TableCell>
-                                            <TableCell> <FaPoll className="graph-button" onClick={(e) => openGraph(e, row.code)} ></FaPoll></TableCell>
-                                          </TableRow>
-                                        ))}
-                                      </TableBody>
-                                    </Table>
-
-                                    {/* {
-                                      exam.results.map((result, index) => {
-                                        return (
-                                          <div  className="result__result-line">
-                                           <div>{result.label}</div>
-                                           <div>{result.value} {result.unit}</div>
-                                           <div>{result.reference_min}</div>
-                                           <div>{result.reference_max}</div>
-                                          </div>
-                                        )
-                                      })
-                                    } */}
-                                  </div>
-                                )
-                              })
-                            }
-
-                          </div>
-                        )
-                      })
-                    }
+                    
+                    { analyse.results ? analyse.results.map((analyse, index) => { 
+                      return (
+                         <div> 
+                           <div className="result__category" >{analyse.category}</div> 
+                           { analyse.exams.map((exam, index) => { 
+                             return ( 
+                             <div> 
+                               <div className="result__exam-name"> {exam.exam_name} </div> 
+                               <div className="result__exam-name-comment"> {exam.comment} </div>
+ 
+                              <Table className={classes.table} aria-label="simple table"> 
+                              <TableHead> 
+                                <TableRow> 
+                                  <TableCell>nom</TableCell> 
+                                  <TableCell align="right">valeur</TableCell> 
+                                  <TableCell align="right">unité</TableCell> 
+                                  <TableCell align="right">reference</TableCell> 
+                                  <TableCell align="right">antériorité</TableCell> 
+                                  <TableCell align="right"></TableCell> 
+                              </TableRow> 
+                              </TableHead> 
+                              <TableBody> {exam.results.map((row) => ( <TableRow key={row.name}> <TableCell align="">{row.label}</TableCell> 
+                              <TableCell align="right">{row.value}</TableCell> 
+                              <TableCell align="right">{row.unit}</TableCell> 
+                              <TableCell align="right">{row.reference_max} - {row.reference_min} </TableCell> 
+                              <TableCell align="right">{row.historique}</TableCell> <TableCell> 
+                                <FaPoll className="graph-button" onClick={(e) => openGraph(e, row.code)} >
+                                  </FaPoll></TableCell> </TableRow> ))} </TableBody> </Table>
+                    {/* { exam.results.map((result, index) => { return ( <div className="result__result-line"> <div>{result.label}</div> <div>{result.value} {result.unit}</div> <div>{result.reference_min}</div> <div>{result.reference_max}</div> </div> ) }) } */} 
+                    </div> ) })} 
+                    </div> )}) : null}
                     </div>
 
                     <div  className="lines__footer"> 
-                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
-                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Editer</div>
+                      <div className="lines__footer-action" onClick={(e) => supprimerAnalyse(analyse)}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
+                      <div className="lines__footer-action" onClick={(e) => editAnalyse(analyse)}> <FaCalendarPlus>  </FaCalendarPlus>Modifier</div>
                     </div>
                   </div>
                 </div>

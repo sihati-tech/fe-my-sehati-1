@@ -216,7 +216,7 @@ export default function MesRadios() {
                     </div>
                     <div  className="lines__footer"> 
                       <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
-                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Editer</div>
+                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Modifier</div>
                     </div>
                   </div>
                 </div>

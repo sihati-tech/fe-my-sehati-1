@@ -34,11 +34,7 @@ export default function WarningMessage(props) {
     props.onCloseWarning(true);
   }
   function onConfirm() {
-    const url = `${API_URL}/benificiares/${props.deleteBenifState}`;
-    axiosInstance.delete(url).then(response => response.data)
-    .then((result) => {
-      props.onConfirm(true);
-    });
+    props.onConfirm(true);
   }
 
   return (

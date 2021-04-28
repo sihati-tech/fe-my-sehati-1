@@ -47,7 +47,6 @@ export default function PatientDashboard() {
   function editBenif(e, benif) {
     e.stopPropagation();
     e.nativeEvent.stopImmediatePropagation();
-    console.log('benif ', benif)
     setBenif(benif)
     setIsOpen(true)
   }
@@ -60,8 +59,12 @@ export default function PatientDashboard() {
     refreshList();
   }
   function onConfirm(value) { 
-    setIsOpenWarning(false)
-    refreshList()
+    const url = `${API_URL}/benificiares/${deleteBenifState}`;
+    axiosInstance.delete(url).then(response => response.data)
+    .then((result) => {
+      setIsOpenWarning(false)
+      refreshList()
+    });
   }
   function onCloseWarning(value) { 
     setIsOpenWarning(false)

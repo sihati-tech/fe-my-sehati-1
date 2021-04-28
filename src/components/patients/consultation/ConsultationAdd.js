@@ -6,6 +6,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 import axiosInstance from '../../../services/httpInterceptor' 
+
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import "./ConsultationAdd.scss";
 const customStyles = {
   content : {
@@ -22,6 +26,7 @@ const customStyles = {
     padding: 0
   }
 };
+const filterList = [{code: 'Generalist', label: 'Généraliste'}, {code: 'Specialist', label: 'Spécialiste'}]
 const API_URL = process.env.REACT_APP_URL;
 
 const useStyles = makeStyles((theme) => ({
@@ -38,56 +43,80 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function ConsultationAdd(props) {
-  const [firstName, setFirstName] = useState(props.benif.first_name);
-  const [lastName, setLastName] = useState(props.benif.last_name);
-  const [birthDate, setBirthDate] = useState(props.benif.birth_date);
-  const [familyLink, setFamilyLink] = useState(props.benif.family_link);
-  const [sex, setSex] = useState(props.benif.sex);
-  const [adresse, setAdresse] = useState(props.benif.adresse);
-  const [commune, setCommune] = useState(props.benif.commune);
-  const [departement, setDepartement] = useState(props.benif.departement);
-  const [region, setRegion] = useState(props.benif.region);
-  const [country, setCountry] = useState(props.benif.country);
-  const [cellPhone, setCellPhone] = useState(props.benif.cell_phone);
-  const [phoneNumber, setPhoneNumber] = useState(props.benif.phone_number);
-  const [fax, setFax] = useState(props.benif.fax);
-  const [email, setEmail] = useState(props.benif.email_address);
-  const [SSN, setSSN] = useState(props.benif.ssn);
-  const [CIN, setCIN] = useState(props.benif.CIN);
-  const [comment, setComment] = useState(props.benif.comment);
 
+  const [consultationName, setConsultationName] = useState(props.consultation.consultation_name);
+  const [consultationDesc, setConsultationDesc] = useState(props.consultation.consultationDesc);
+  const [price, setPrice] = useState(props.consultation.price);
+  const [dateRdv, setDateRdv] = useState(props.consultation.date_rdv);
+  const [commentDr, setCommentDr] = useState(props.consultation.commentaire_medecin);
+  const [comment, setComment] = useState(props.consultation.comment);
+  const [medecin, setMedecin] = useState(props.consultation.medecin);
+  const [medecinList, setMedecinList] = useState([]);
+  const [speciality, setSpeciality] = useState('Generalist');
+  const [status, setStatus] = useState(props.consultation.consultation_status);
+
+  useEffect( () => {
+    const url = `${API_URL}/medecins?speciality=${speciality}` ;
+    axiosInstance.get(url).then(response => response.data)
+    .then((doctorList) => { 
+      setMedecinList(doctorList)
+    });
+  }, []);
   const classes = useStyles();
   function closeModal() {
     props.onChange(true);
   }
-
-  function handleSubmit(event) {
-    const dataToSend = {
-      first_name: firstName,
-      last_name: lastName,
-      phone_number: phoneNumber,
-      birth_date: birthDate,
-      family_link: familyLink,
-      sex,
-      adresse,
-      commune,
-      departement,
-      region,
-      country,
-      fax,
-      CIN,
-      comment,
-      cell_phone: cellPhone,
-      email_address: email,
-      ssn: SSN
-    }
-    console.log('props.benif ', props.benif)
-    const url = props.benif._id ? `${API_URL}/benificiares/${props.benif._id}` : `${API_URL}/benificiares`;
-    axiosInstance.post(url, dataToSend).then(response => response.data)
-    .then((result) => { closeModal() }
-    );
+  function selectFilter(filter) {
+    setSpeciality(filter.code);
+    listDoctors(filter.code);
   }
-
+  function listDoctors(speciality) {
+    const url = `${API_URL}/medecins?speciality=${speciality}` ;
+    axiosInstance.get(url).then(response => response.data)
+    .then((doctorList) => { 
+      setMedecinList(doctorList)
+    });
+  }
+  function handleSubmit(event) {
+    if (props.consultation.medecin) {
+      const dataToSend = {
+        consultation_name: consultationName,
+        consultation_desc: consultationDesc,
+        date_rdv: dateRdv,
+        commentaire_medecin: commentDr,
+        commentaire: comment,
+        price: price,
+        consultation_status: status,
+        _id: props.consultation._id
+      }
+      const url = `${API_URL}/consultation/benif/${props.benif}`;
+      console.log('url ', url, dataToSend)
+    
+      axiosInstance.post(url, dataToSend).then(response => response.data)
+      .then((result) => { closeModal() }
+      );
+    }
+    else if (medecin ) {
+      const dataToSend = {
+        consultation_name: consultationName,
+        consultation_desc: consultationDesc,
+        medecin: medecin,
+        date_rdv: dateRdv,
+        commentaire_medecin: commentDr,
+        commentaire: comment,
+        price: price,
+      }
+      const url = `${API_URL}/consultation/benif/${props.benif}`;
+      console.log('url ', url, dataToSend)
+    
+      axiosInstance.post(url, dataToSend).then(response => response.data)
+      .then((result) => { closeModal() }
+      );
+    }
+  }
+  function handleChangeStatus(event) {
+    setStatus(event.target.value);
+  };
   return (
     <Modal
         isOpen={props.isOpen}
@@ -98,7 +127,7 @@ export default function ConsultationAdd(props) {
           <div className="modal__header">
             <div className="modal__header-title">
               {
-              !props.benif._id ? 'Nouvelle consultation' : 'Mise à jour de la consultation'
+              !props.consultation._id ? 'Nouvelle consultation' : 'Mise à jour de la consultation'
               }
             </div>
             <div className="modal__header-close">
@@ -117,23 +146,67 @@ export default function ConsultationAdd(props) {
       <div className={classes.paper}>
         <form className={classes.form} >
           <div className={'content-modal'}>
-            <TextField margin="normal" fullWidth label="Nom*" name="lastName" value={lastName} onChange={event => setLastName(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Prenom*" name="firstName"  value={firstName} onChange={event => setFirstName(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Date de naissance*" name="firstName"  value={birthDate} onChange={event => setBirthDate(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Lien de parenté*" name="firstName"  value={familyLink} onChange={event => setFamilyLink(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Sexe*" name="firstName"  value={sex} onChange={event => setSex(event.target.value)} />
-            <TextField margin="normal" fullWidth label="adresse*" name="firstName"  value={adresse} onChange={event => setAdresse(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commune*" name="firstName"  value={commune} onChange={event => setCommune(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Departement*" name="firstName"  value={departement} onChange={event => setDepartement(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Region*" name="firstName"  value={region} onChange={event => setRegion(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Pays*" name="firstName"  value={country} onChange={event => setCountry(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Tel portable*" name="firstName"  value={cellPhone} onChange={event => setCellPhone(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Tel fixe*" name="firstName"  value={phoneNumber} onChange={event => setPhoneNumber(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Fax*" name="firstName"  value={fax} onChange={event => setFax(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Email*" name="firstName"  value={email} onChange={event => setEmail(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Numéro de sécu Soc*" name="firstName"  value={SSN} onChange={event => setSSN(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Numéro CIN*" name="firstName"  value={CIN} onChange={event => setCIN(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
+          { props.consultation.medecin ? 
+            <div className={'select__container_fix'}> 
+            {
+            props.consultation.medecin.speciality
+             + ' ' + 
+            props.consultation.medecin.last_name
+             + ' ' + 
+             props.consultation.medecin.first_name}</div>
+            : 
+          <div className={'select__container'}>
+          
+          <div className={'filter__container'}>
+            {
+              filterList.map((filter, index) => {
+                return (
+                  <div className={filter.code === speciality ? 'filter__container--item filter__container-actif' : 'filter__container--item'} onClick={(e) => selectFilter(filter)}>
+                    {filter.label}
+                  </div>
+                )
+              })
+            }
+          </div>
+
+
+           <Autocomplete
+            className={'Autocomplete'}
+              id="combo-box-demo"
+              options={medecinList}
+              getOptionLabel={(option) => option.last_name + ' ' + option.first_name}
+              onChange={(event, newValue) => {
+                if (newValue && newValue._id)
+                  setMedecin(newValue._id);
+                else 
+                  setMedecin('');
+              }}
+              renderInput={(params) => <TextField {...params} label="Selectionner un medecin" variant="outlined" />}
+            />
+            </div>
+            }     
+            {/* <TextField margin="normal" fullWidth label="Medcin*" name="consultationName"  value={medecin} onChange={event => setMedecin(event.target.value)} /> */}
+            <TextField margin="normal" fullWidth label="Nom*" name="consultationName"  value={consultationName} onChange={event => setConsultationName(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Description*" name="consultationDesc" value={consultationDesc} onChange={event => setConsultationDesc(event.target.value)} />
+            <TextField id="date" label="Date de RDV*" type="date" value={dateRdv}
+              onChange={event => setDateRdv(event.target.value)}
+              InputLabelProps={{ shrink: true }} />
+            <TextField margin="normal" fullWidth label="Prix" name="consultationName"  value={price} onChange={event => setPrice(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Commentaire*" name="consultationName"  value={comment} onChange={event => setComment(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Commentaire Médecin*" name="consultationName"  value={commentDr} onChange={event => setCommentDr(event.target.value)} />
+
+            { props.consultation.medecin ? 
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={status}
+                onChange={handleChangeStatus}
+              >
+                <MenuItem value={'Later'}>A venir</MenuItem>
+                <MenuItem value={'Done'}>Terminé</MenuItem>
+              </Select>              
+              : null
+            }
           </div>
           <div className={'footer-modal'}>
           <Button
@@ -148,7 +221,7 @@ export default function ConsultationAdd(props) {
               className={classes.submit}
               onClick={ handleSubmit }
             > {
-              !props.benif._id ? 'Ajouter' : 'Mise à jour'
+              !props.consultation._id ? 'Ajouter' : 'Mise à jour'
               } </Button>
           </div>
           

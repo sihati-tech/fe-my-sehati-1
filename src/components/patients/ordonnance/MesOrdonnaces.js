@@ -17,6 +17,7 @@ import Tab from '@material-ui/core/Tab';
 import OrdonnaceAdd from './OrdonnaceAdd'
 import "./mesOrdonnaces.scss";
 import HeaderComponent from '../header/headerComponent'
+import WarningMessage from '../../../shared/component/WarningMessage'
 const API_URL = process.env.REACT_APP_URL;
 
 const StatusMapping = {
@@ -131,6 +132,8 @@ const mockData =  [
     attachement: ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'],
   }
 ]
+const attachement = ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'];
+
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
@@ -151,10 +154,11 @@ export default function MesOrdonnaces() {
   const history = useHistory()
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
-  const [value, setValue] = React.useState(0);
   const [filter, setFilter] = React.useState('Generalist');
-  const [ordonnanceList, setConsultationList] = React.useState([]);
+  const [ordonnanceList, setOrdonnanceList] = React.useState([]);
 
+  const [isOpenWarning, setIsOpenWarning] = useState(false);
+  const [displayedOrdonannceList, setdisplayedOrdonannceList] = React.useState([]);
   const [ordonnance, setOrdonnance] = useState({});
   const [isOpen, setIsOpen] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -170,22 +174,17 @@ export default function MesOrdonnaces() {
       setLastName(benif.last_name)
     }
     );
+    refreshList();
   }, []);
 
-  const handleChangeTab = (event, newValue) => {
-    setValue(newValue);
-    const filteredData = mockData.filter(data => 
-      data.status === StatusMapping[newValue] && data.type === filter)
-    setConsultationList(filteredData)
-  };
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
   const handleChangeFilter = (panel) => (event, isExpanded) => {
     setFilter(panel);
-    const filteredData = mockData.filter(data => 
-      data.status === StatusMapping[value] && data.type === panel)
-    setConsultationList(filteredData)
+    const filteredData = ordonnanceList.filter(data => 
+      data.consultation.medecin.speciality === panel)
+      setdisplayedOrdonannceList(filteredData)
   };
 
   function goBack() {
@@ -196,10 +195,13 @@ export default function MesOrdonnaces() {
   }
 
   function refreshList () {
-    const url = `${API_URL}/benificiares/${id}/ordonnances`;
+    const url = `${API_URL}/ordonnances/benif/${id}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
-      setConsultationList(result)
+        setOrdonnanceList(result);
+        const filteredData = result.filter(data => data.consultation.medecin.speciality === filter)
+          setdisplayedOrdonannceList(filteredData)
+
       }
     );
   }
@@ -211,6 +213,37 @@ export default function MesOrdonnaces() {
     setIsOpen(false) 
     refreshList();
   }
+
+  function onConfirm(value) { 
+    console.log('ordonnance ', ordonnance)
+    setIsOpenWarning(false);
+    const url = `${API_URL}/ordonnances/${ordonnance._id}`;
+    axiosInstance.delete(url).then(response => response.data)
+    .then((result) => {
+      refreshList()
+      }
+    );
+    refreshList()
+  }
+  function supprimerOrdonnance(ordonnance) {
+    setOrdonnance(ordonnance)
+    setIsOpenWarning(true)
+  }
+  function onCloseWarning(value) { 
+    setIsOpenWarning(false)
+  }
+
+  function editOrdonnance(ordonnance) {
+    setOrdonnance(ordonnance)
+    setIsOpen(true)
+  }
+  function downloadFile(file) {
+    console.log('file ', file)
+    const url = `${API_URL}/file/download`;
+    axiosInstance.post(url, file).then(response => response.data)
+    .then((result) => {  }
+    );
+  }
   return (
     <div className="container-wrapper">
       <HeaderComponent></HeaderComponent>
@@ -220,10 +253,16 @@ export default function MesOrdonnaces() {
         <OrdonnaceAdd
           onChange={onChange}
           isOpen={isOpen}
-          benif= {ordonnance}
+          ordonnance= {ordonnance}
+          benif= {id}
           ></OrdonnaceAdd>
       : null
       }
+      <WarningMessage 
+              onCloseWarning={onCloseWarning}
+              isOpenWarning={isOpenWarning}
+              onConfirm={onConfirm}>
+          </WarningMessage>
       <div className="container-body">
       <div className="container-return-action"  onClick={(e) => goBack()}>
         <FaArrowLeft>  </FaArrowLeft> retourner à mon tableau de bord
@@ -250,63 +289,47 @@ export default function MesOrdonnaces() {
           onClick={handleChangeFilter('Dentiste')}>Dentiste</div>
           <div className={filter === 'Opticien' ? "container-filter-top-actif" : "container-filter-top" }
           onClick={handleChangeFilter('Opticien')}>Opticien</div>
-          <div className={filter === 'Pediatre' ? "container-filter-top-actif" : "container-filter-top" }
-          onClick={handleChangeFilter('Pediatre')}>Opticien</div>
-          <div className={filter === 'Geneco' ? "container-filter-top-actif" : "container-filter-top" }
-          onClick={handleChangeFilter('Geneco')}>Opticien</div>
         </div>
 
 
-        <Tabs
-          value={value}
-          onChange={handleChangeTab}
-          indicatorColor="primary"
-          textColor="primary"
-          centered
-        >
-          <Tab label="Terminé" />
-          <Tab label="En cours" />
-          <Tab label="A venir" />
-        </Tabs>
       <div className={classes.root}>
         {
-          ordonnanceList.map((ordonnance, index) => {
+          displayedOrdonannceList.map((ordonnance, index) => {
             return (
-              <Accordion expanded={expanded === ordonnance.id} onChange={handleChange(ordonnance.id)}>
+              <Accordion expanded={expanded === ordonnance._id} onChange={handleChange(ordonnance._id)}>
                 <AccordionSummary
                   expandIcon={<FaAngleDown />}
                   aria-controls="panel1bh-content"
                   id="panel1bh-header"
                 >
-                  <Typography className='accordion__title'>{ordonnance.date}</Typography>
-                  <Typography className='accordion__subtitle'>{ordonnance.type}: {ordonnance.doctor_name}</Typography>
+                  <Typography className='accordion__title'>{ordonnance.date_rdv}</Typography>
+                  <Typography className='accordion__subtitle'>{ordonnance.consultation.medecin.speciality}: {ordonnance.consultation.medecin.last_name + ' ' + ordonnance.consultation.medecin.first_name}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                <div>
+                <div className='all_width'>
         
                 <Typography className="padding2">
                 {ordonnance.note}
                   </Typography> 
                   <div  className="lines">
-                    <div  className="lines__line"> <div className="lines__title">nom</div><div className="lines__desc">{ordonnance.consultation_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc-clickable">{ordonnance.doctor_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Consultation</div><div className="lines__desc-clickable">{ordonnance.ordonnance}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date de ordonnance</div><div className="lines__desc">{ordonnance.consultation_date}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prise de RDV</div><div className="lines__desc">{ordonnance.consultation_RDV}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{ordonnance.date}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">nom</div><div className="lines__desc">{ordonnance.ordonnance_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc-clickable">{ordonnance.consultation.medecin.last_name + ' ' + ordonnance.consultation.medecin.first_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Consultation</div><div className="lines__desc-clickable">{ordonnance.consultation.consultation_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date de RDV</div><div className="lines__desc">{ordonnance.date_rdv}</div></div>
                     <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{ordonnance.price}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">commentaire medecin</div><div className="lines__desc">{ordonnance.comment_medecin}</div></div>
                     <div  className="lines__line"> <div className="lines__title">document</div> 
                     <div>
-                      {ordonnance.attachement.map(item => {
-                        return (<div> {item} </div>);
+                      {ordonnance.attachements.map(item => {
+                        return (<div onClick={(e) => downloadFile(item)}> {item.name} </div>);
                       })}
                     </div>
                     </div>
-                    <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc">{ordonnance.consultation_comment}</textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">commentaire patient</div><textarea className="lines__desc">{ordonnance.comment}</textarea></div>
                     
                     <div  className="lines__footer"> 
-                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
-                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Editer</div>
+                      <div className="lines__footer-action" onClick={(e) => supprimerOrdonnance(ordonnance)}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
+                      <div className="lines__footer-action" onClick={(e) => editOrdonnance(ordonnance)}> <FaCalendarPlus>  </FaCalendarPlus>Modifier</div>
                     </div>
                   </div>
                 </div>

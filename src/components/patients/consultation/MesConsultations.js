@@ -9,6 +9,7 @@ import {
   BrowserRouter as Router,
   useParams
 } from "react-router-dom";
+import WarningMessage from '../../../shared/component/WarningMessage'
 import axiosInstance from '../../../services/httpInterceptor' 
 import { useHistory } from "react-router-dom";
 import Tabs from '@material-ui/core/Tabs';
@@ -37,112 +38,20 @@ const useStyles = makeStyles((theme) => ({
 
 const StatusMapping = {
   0: 'Done',
-  1: 'InProgress',
-  2: 'Later',
+  1: 'Later',
 }
-const mockData =  [
-  {
-    id: 11,
-    type: 'Generalist',
-    price: '45$',
-    status: 'InProgress',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-  },
-  {
-    id: 12,
-    type: 'Generalist',
-    status: 'InProgress',
-    price: '45$',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-  },
-  {
-    id: 13,
-    type: 'Generalist',
-    price: '45$',
-    status: 'Later',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-  },
-  {
-    id: 14,
-    type: 'Generalist',
-    price: '45$',
-    status: 'Done',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-  },
-  {
-    id: 15,
-    type: 'Specialist',
-    price: '45$',
-    status: 'InProgress',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-  },
-  {
-    id: 16,
-    type: 'Specialist',
-    price: '45$',
-    status: 'Later',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-  },
-  {
-    id: 17,
-    type: 'Specialist',
-    price: '45$',
-    status: 'Done',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-  }
-]
 
 export default function MesConsultations() {
 
   let { id } = useParams();
+  const [isOpenWarning, setIsOpenWarning] = useState(false);
   const history = useHistory()
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [value, setValue] = React.useState(0);
   const [filter, setFilter] = React.useState('Generalist');
   const [consultationList, setConsultationList] = React.useState([]);
+  const [displayedConsultationList, setdisplayedConsultationList] = React.useState([]);
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -157,24 +66,24 @@ export default function MesConsultations() {
       const benif = result[0];
       setFirstName(benif.first_name)
       setLastName(benif.last_name)
-    }
-    );
+    });
+    refreshList();
   }, []);
 
   const handleChangeTab = (event, newValue) => {
     setValue(newValue);
-    const filteredData = mockData.filter(data => 
-      data.status === StatusMapping[newValue] && data.type === filter)
-    setConsultationList(filteredData)
+    const filteredData = consultationList.filter(data => 
+      data.consultation_status === StatusMapping[newValue] && data.medecin.speciality === filter)
+      setdisplayedConsultationList(filteredData)
   };
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
   const handleChangeFilter = (panel) => (event, isExpanded) => {
     setFilter(panel);
-    const filteredData = mockData.filter(data => 
-      data.status === StatusMapping[value] && data.type === panel)
-    setConsultationList(filteredData)
+    const filteredData = consultationList.filter(data => 
+      data.consultation_status === StatusMapping[value] && data.medecin.speciality === panel)
+      setdisplayedConsultationList(filteredData)
   };
 
   function goBack() {
@@ -188,18 +97,44 @@ export default function MesConsultations() {
     setConsultation({})
     setIsOpen(true)
   }
+
+  function editConsultation(consultation) {
+    setConsultation(consultation)
+    setIsOpen(true)
+  }
+
+  function deleteConsultation(consultation) {
+    setConsultation(consultation)
+    setIsOpenWarning(true)
+  }
   
   function refreshList () {
-    const url = `${API_URL}/benificiares/${id}/consultations`;
+    const url = `${API_URL}/consultation/benif/${id}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
-      setConsultationList(result)
-      }
+      setConsultationList(result);
+      const filteredData = result.filter(data => 
+        data.consultation_status === StatusMapping[value] && data.medecin.speciality === filter)
+        setdisplayedConsultationList(filteredData)
+        }
     );
   }
   function onChange(value) { 
     setIsOpen(false) 
     refreshList();
+  }
+  function onConfirm(value) { 
+    setIsOpenWarning(false);
+    const url = `${API_URL}/consultation/${consultation._id}`;
+    axiosInstance.delete(url).then(response => response.data)
+    .then((result) => {
+      refreshList()
+      }
+    );
+    refreshList()
+  }
+  function onCloseWarning(value) { 
+    setIsOpenWarning(false)
   }
   return (
     <div className="container-wrapper">
@@ -209,10 +144,16 @@ export default function MesConsultations() {
         <ConsultationAdd
           onChange={onChange}
           isOpen={isOpen}
-          benif= {consultation}
+          consultation= {consultation}
+          benif= {id}
           ></ConsultationAdd>
       : null
       }
+      <WarningMessage 
+              onCloseWarning={onCloseWarning}
+              isOpenWarning={isOpenWarning}
+              onConfirm={onConfirm}>
+          </WarningMessage>
       <div className="container-body">
       <div className="container-return-action"  onClick={(e) => goBack()}>
         <FaArrowLeft>  </FaArrowLeft> retourner à mon tableau de bord
@@ -240,10 +181,6 @@ export default function MesConsultations() {
           onClick={handleChangeFilter('Dentiste')}>Dentiste</div>
           <div className={filter === 'Opticien' ? "container-filter-top-actif" : "container-filter-top" }
           onClick={handleChangeFilter('Opticien')}>Opticien</div>
-          <div className={filter === 'Pediatre' ? "container-filter-top-actif" : "container-filter-top" }
-          onClick={handleChangeFilter('Pediatre')}>Opticien</div>
-          <div className={filter === 'Geneco' ? "container-filter-top-actif" : "container-filter-top" }
-          onClick={handleChangeFilter('Geneco')}>Opticien</div>
         </div>
 
 
@@ -255,45 +192,44 @@ export default function MesConsultations() {
           centered
         >
           <Tab label="Terminé" />
-          <Tab label="En cours" />
           <Tab label="A venir" />
         </Tabs>
       <div className={classes.root}>
         {
-          consultationList.map((consultation, index) => {
+          displayedConsultationList.map((consultation, index) => {
             return (
-              <Accordion expanded={expanded === consultation.id} onChange={handleChange(consultation.id)}>
+              <Accordion expanded={expanded === consultation._id} onChange={handleChange(consultation._id)}>
                 <AccordionSummary
                   expandIcon={<FaAngleDown />}
                   aria-controls="panel1bh-content"
                   id="panel1bh-header"
                 >
-                  <Typography className='accordion__title'>{consultation.date}</Typography>
-                  <Typography className='accordion__subtitle'>{consultation.type}: {consultation.doctor_name}</Typography>
+                  <Typography className='accordion__title'>{consultation.date_rdv}</Typography>
+                  <Typography className='accordion__subtitle'>{consultation.medecin.speciality}: {consultation.medecin.first_name} {consultation.medecin.last_name}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                <div>
+                <div className='all_width'>
         
                 <Typography className="padding2">
-                {consultation.note}
+                {consultation.consultation_desc}
                   </Typography> 
                   <div  className="lines">
                     <div  className="lines__line"> <div className="lines__title">nom</div><div className="lines__desc">{consultation.consultation_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc">{consultation.doctor_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date de consultation</div><div className="lines__desc">{consultation.consultation_date}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prise de RDV</div><div className="lines__desc">{consultation.consultation_RDV}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{consultation.data}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc">{consultation.medecin.first_name} {consultation.medecin.last_name}</div></div>
+                    {value === 0 ? <div  className="lines__line"> <div className="lines__title">date de consultation</div><div className="lines__desc">{consultation.date_consultation}</div></div> : null}
+                    <div  className="lines__line"> <div className="lines__title">date prise de RDV</div><div className="lines__desc">{consultation.date_rdv}</div></div>
                     <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{consultation.price}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc">{consultation.consultation_comment}</textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">commentaire medecin</div><textarea className="lines__desc">{consultation.commentaire_medecin}</textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">commentaire</div><textarea className="lines__desc">{consultation.commentaire}</textarea></div>
                     
                     <div  className="lines__line"> 
                       <div className="lines__title">status</div>
-                      <div className="lines__last-line-desc"> {consultation.status}</div>
+                      <div className="lines__last-line-desc"> {consultation.consultation_status}</div>
                     </div>
 
                     <div  className="lines__footer"> 
-                      <div className="lines__footer-action" onClick={(e) => addConsultation()}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
-                      <div className="lines__footer-action" onClick={(e) => addConsultation()}> <FaCalendarPlus>  </FaCalendarPlus>Editer</div>
+                      <div className="lines__footer-action" onClick={(e) => deleteConsultation(consultation)}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
+                      <div className="lines__footer-action" onClick={(e) => editConsultation(consultation)}> <FaCalendarPlus>  </FaCalendarPlus>Modifier</div>
                     </div>
                   </div>
                 </div>

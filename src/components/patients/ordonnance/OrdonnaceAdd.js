@@ -5,6 +5,9 @@ import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
+
+import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import axiosInstance from '../../../services/httpInterceptor' 
 import "./OrdonnaceAdd.scss";
 const customStyles = {
@@ -38,56 +41,90 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function ConsultationAdd(props) {
-  const [firstName, setFirstName] = useState(props.benif.first_name);
-  const [lastName, setLastName] = useState(props.benif.last_name);
-  const [birthDate, setBirthDate] = useState(props.benif.birth_date);
-  const [familyLink, setFamilyLink] = useState(props.benif.family_link);
-  const [sex, setSex] = useState(props.benif.sex);
-  const [adresse, setAdresse] = useState(props.benif.adresse);
-  const [commune, setCommune] = useState(props.benif.commune);
-  const [departement, setDepartement] = useState(props.benif.departement);
-  const [region, setRegion] = useState(props.benif.region);
-  const [country, setCountry] = useState(props.benif.country);
-  const [cellPhone, setCellPhone] = useState(props.benif.cell_phone);
-  const [phoneNumber, setPhoneNumber] = useState(props.benif.phone_number);
-  const [fax, setFax] = useState(props.benif.fax);
-  const [email, setEmail] = useState(props.benif.email_address);
-  const [SSN, setSSN] = useState(props.benif.ssn);
-  const [CIN, setCIN] = useState(props.benif.CIN);
-  const [comment, setComment] = useState(props.benif.comment);
-
+  const [consultation, setConsultation] = useState(props.ordonnance.consultation);
+  const [dateRDV, setDateRDV] = useState(props.ordonnance.date_rdv);
+  const [ordonnanceName, setOrdonnanceName] = useState(props.ordonnance.ordonnance_name);
+  const [price, setPrice] = useState(props.ordonnance.price);
+  const [commentPatient, setCommentPatient] = useState(props.ordonnance.comment);
+  const [comment, setComment] = useState(props.ordonnance.comment_medecin);
+  const [consultationList, setConsultationList] = useState([]);
+  const [fileList, setFileList] = useState(props.ordonnance.attachements);
+  
+  useEffect( () => {
+    const url = `${API_URL}/consultation/benif/${props.benif}` ;
+    axiosInstance.get(url).then(response => response.data)
+    .then((lst) => { 
+      setConsultationList(lst)
+    });
+  }, []);
   const classes = useStyles();
   function closeModal() {
     props.onChange(true);
   }
 
   function handleSubmit(event) {
-    const dataToSend = {
-      first_name: firstName,
-      last_name: lastName,
-      phone_number: phoneNumber,
-      birth_date: birthDate,
-      family_link: familyLink,
-      sex,
-      adresse,
-      commune,
-      departement,
-      region,
-      country,
-      fax,
-      CIN,
-      comment,
-      cell_phone: cellPhone,
-      email_address: email,
-      ssn: SSN
-    }
-    console.log('props.benif ', props.benif)
-    const url = props.benif._id ? `${API_URL}/benificiares/${props.benif._id}` : `${API_URL}/benificiares`;
-    axiosInstance.post(url, dataToSend).then(response => response.data)
-    .then((result) => { closeModal() }
-    );
-  }
 
+    if (props.ordonnance._id) {
+      const dataToSend = {
+        ordonnance_name: ordonnanceName,
+        date_rdv: dateRDV,
+        price: price,
+        consultation: consultation,
+        comment_medecin: comment,
+        comment: commentPatient,
+        _id: props.ordonnance._id
+      }
+      console.log('props.benif ', dataToSend)
+      const url = `${API_URL}/ordonnances/benif/${props.benif}`
+      axiosInstance.post(url, dataToSend).then(response => response.data)
+      .then((result) => { 
+        const ordonnanceId = result._id;
+        sendFiles(ordonnanceId);
+        closeModal() }
+      );
+    } else {
+      const dataToSend = {
+        ordonnance_name: ordonnanceName,
+        date_rdv: dateRDV,
+        price: price,
+        consultation: consultation,
+        comment_medecin: comment,
+        comment: commentPatient,
+      }
+      const url = `${API_URL}/ordonnances/benif/${props.benif}`
+      axiosInstance.post(url, dataToSend).then(response => response.data)
+      .then((result) => { 
+        const ordonnanceId = result._id;
+        sendFiles(ordonnanceId);
+        closeModal() }
+      );
+    }
+  }
+  function sendFiles(ordonnanceId) {
+    if (fileList && fileList.length > 0 && fileList[0]._id) {}
+    else if(fileList.length == 0) {}
+    else {
+      const formData = new FormData(); 
+      for (var x = 0; x < fileList.length; x++) {
+        formData.append(fileList[x].name, fileList[x]);
+      }
+      const url = `${API_URL}/ordonnances/${ordonnanceId}/benif/${props.benif}/upload/${fileList[0].name}`
+      axiosInstance.post(url, formData).then(response => response.data)
+      .then((result) => { }
+      );
+    }
+  }
+  function deleteFile(e, file, index) {
+    setFileList(fileList.filter(item => item.name !== file.name));
+  }
+  function uploadFile(event) {
+    const array = []
+    for (let i=0; i<event.length; i++) {
+      array.push(event[i])
+    }
+    setFileList(array);
+    console.log('file ', array)
+  }
   return (
     <Modal
         isOpen={props.isOpen}
@@ -98,7 +135,7 @@ export default function ConsultationAdd(props) {
           <div className="modal__header">
             <div className="modal__header-title">
               {
-              !props.benif._id ? 'Nouvelle Ordonnance' : `Mise à jour de l'ordonnance`
+              !props.ordonnance._id ? 'Nouvelle Ordonnance' : `Mise à jour de l'ordonnance`
               }
             </div>
             <div className="modal__header-close">
@@ -117,23 +154,47 @@ export default function ConsultationAdd(props) {
       <div className={classes.paper}>
         <form className={classes.form} >
           <div className={'content-modal'}>
-            <TextField margin="normal" fullWidth label="Nom*" name="lastName" value={lastName} onChange={event => setLastName(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Prenom*" name="firstName"  value={firstName} onChange={event => setFirstName(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Date de naissance*" name="firstName"  value={birthDate} onChange={event => setBirthDate(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Lien de parenté*" name="firstName"  value={familyLink} onChange={event => setFamilyLink(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Sexe*" name="firstName"  value={sex} onChange={event => setSex(event.target.value)} />
-            <TextField margin="normal" fullWidth label="adresse*" name="firstName"  value={adresse} onChange={event => setAdresse(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commune*" name="firstName"  value={commune} onChange={event => setCommune(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Departement*" name="firstName"  value={departement} onChange={event => setDepartement(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Region*" name="firstName"  value={region} onChange={event => setRegion(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Pays*" name="firstName"  value={country} onChange={event => setCountry(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Tel portable*" name="firstName"  value={cellPhone} onChange={event => setCellPhone(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Tel fixe*" name="firstName"  value={phoneNumber} onChange={event => setPhoneNumber(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Fax*" name="firstName"  value={fax} onChange={event => setFax(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Email*" name="firstName"  value={email} onChange={event => setEmail(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Numéro de sécu Soc*" name="firstName"  value={SSN} onChange={event => setSSN(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Numéro CIN*" name="firstName"  value={CIN} onChange={event => setCIN(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
+          { props.ordonnance._id ? 
+            <div className={'select__container_fix'}> 
+            { props.ordonnance.consultation.consultation_name}</div>
+            : 
+          <Autocomplete
+            className={'Autocomplete'}
+              id="combo-box-demo"
+              options={consultationList}
+              getOptionLabel={(option) => option.consultation_name + ' (Dr. ' + option.medecin.last_name + ')'}
+              onChange={(event, newValue) => {
+                if (newValue && newValue._id)
+                  setConsultation(newValue._id);
+                else 
+                  setConsultation('');
+              }}
+              renderInput={(params) => <TextField {...params} label="Selectionner une consultation" variant="outlined" />}
+            />
+            }
+            <TextField margin="normal" fullWidth label="Nom*" name="firstName"  value={ordonnanceName} onChange={event => setOrdonnanceName(event.target.value)} />
+            <TextField id="date" label="Date de RDV*" type="date" value={dateRDV}
+              onChange={event => setDateRDV(event.target.value)}
+              InputLabelProps={{ shrink: true }} />
+            <TextField margin="normal" fullWidth label="Prix*" name="firstName"  value={price} onChange={event => setPrice(event.target.value)} />
+            <TextField margin="normal" fullWidth label="commentaire patient*" name="firstName"  value={commentPatient} onChange={event => setCommentPatient(event.target.value)} />
+            <TextField margin="normal" fullWidth label="commentaire medecin*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
+
+            {
+            (fileList && fileList.length > 0) ?
+              (fileList).map((item, index) => {
+                return (<div> {item.name} <FaTrash onClick={(e) => deleteFile(e, item, index)}></FaTrash></div>);
+              })
+              : null
+            }
+            
+            <div className={'drag-container'}> 
+            <input
+                 type="file" 
+                 onChange={(e) => uploadFile(e.target.files)}/>
+                
+                 <span>Parcourir mon ordinateur</span>
+            </div>
           </div>
           <div className={'footer-modal'}>
           <Button
@@ -148,7 +209,7 @@ export default function ConsultationAdd(props) {
               className={classes.submit}
               onClick={ handleSubmit }
             > {
-              !props.benif._id ? 'Ajouter' : 'Mise à jour'
+              !props.ordonnance._id ? 'Ajouter' : 'Mise à jour'
               } </Button>
           </div>
           

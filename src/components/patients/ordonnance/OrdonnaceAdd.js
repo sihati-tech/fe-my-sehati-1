@@ -101,18 +101,19 @@ export default function ConsultationAdd(props) {
     }
   }
   function sendFiles(ordonnanceId) {
-    if (fileList && fileList.length > 0 && fileList[0]._id) {}
-    else if(fileList.length == 0) {}
-    else {
-      const formData = new FormData(); 
-      for (var x = 0; x < fileList.length; x++) {
-        formData.append(fileList[x].name, fileList[x]);
+    if (fileList)
+      if (fileList && fileList.length > 0 && fileList[0]._id) {}
+      else if(fileList.length == 0) {}
+      else {
+        const formData = new FormData(); 
+        for (var x = 0; x < fileList.length; x++) {
+          formData.append(fileList[x].name, fileList[x]);
+        }
+        const url = `${API_URL}/ordonnances/${ordonnanceId}/benif/${props.benif}/upload/${fileList[0].name}`
+        axiosInstance.post(url, formData).then(response => response.data)
+        .then((result) => { }
+        );
       }
-      const url = `${API_URL}/ordonnances/${ordonnanceId}/benif/${props.benif}/upload/${fileList[0].name}`
-      axiosInstance.post(url, formData).then(response => response.data)
-      .then((result) => { }
-      );
-    }
   }
   function deleteFile(e, file, index) {
     setFileList(fileList.filter(item => item.name !== file.name));

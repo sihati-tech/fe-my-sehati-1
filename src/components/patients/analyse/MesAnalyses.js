@@ -154,7 +154,6 @@ const mockData =  [
   }]
 
 export default function MesAnalyses() {
-
   let { id } = useParams();
   const history = useHistory()
   const classes = useStyles();
@@ -162,6 +161,7 @@ export default function MesAnalyses() {
   const [expanded, setExpanded] = React.useState(false);
   const [value, setValue] = React.useState(0);
   const [consultationList, setConsultationList] = React.useState([]);
+  const [displayedConsultationList, setdisplayedConsultationList] = React.useState([]);
 
   const [isOpenWarning, setIsOpenWarning] = useState(false);
   const [analyse, setAnalyse] = useState({});
@@ -183,12 +183,10 @@ export default function MesAnalyses() {
 
 
   const handleChangeTab = (event, newValue) => {
-    console.log('newValue ', newValue, StatusMapping[newValue] )
     setValue(newValue);
-    const filteredData = mockData.filter(data => 
-      data.status === StatusMapping[newValue])
-      console.log('filteredData ', filteredData)
-    setConsultationList(filteredData)
+    const filteredData = consultationList.filter(data => 
+      data.analyse_status === StatusMapping[newValue])
+      setdisplayedConsultationList(filteredData)
   };
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -211,8 +209,10 @@ export default function MesAnalyses() {
     const url = `${API_URL}/analyses/benif/${id}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
-      console.log('result')
-      setConsultationList(result)
+      setConsultationList(result);
+      const filteredData = result.filter(data => 
+        data.analyse_status === StatusMapping[value])
+        setdisplayedConsultationList(filteredData)
       }
     );
   }
@@ -305,9 +305,9 @@ export default function MesAnalyses() {
         </Tabs>
       <div className={classes.root}>
         {
-          consultationList.map((analyse, index) => {
+          displayedConsultationList.map((analyse, index) => {
             return (
-              <Accordion expanded={expanded === analyse.id} onChange={handleChange(analyse.id)}>
+              <Accordion expanded={expanded === analyse._id} onChange={handleChange(analyse._id)}>
                 <AccordionSummary
                   expandIcon={<FaAngleDown />}
                   aria-controls="panel1bh-content"
@@ -334,26 +334,37 @@ export default function MesAnalyses() {
                     <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{analyse.price}</div></div>
                     <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc" value={analyse.comment}></textarea></div>
         
-                    <div  className="lines__line"> 
-                      <div className="lines__title">attachement</div>
-                      {analyse.attachements.map(item => {
-                        return (<div onClick={(e) => downloadFile(item)}> {item.name} </div>);
-                      })}
-                    </div>
 
+                    {
+                    analyse.analyse_status === 'Done' ?
+                    <div className="result__container" >
+                    <div className="result__title"> Documents </div>
+                      <div>
+                      <div className="result__exam-name"> attachement </div>
+                        {
+                          analyse.attachements.map((exam, index) => {
+                            return ( <div className="result__exam-name-comment"  onClick={(e) => downloadFile(exam)}> {exam.name} </div> )
+                          })
+                        }
+                      
+                      </div>
+
+                    </div>
+                     : null
+                    }
                     <div className="result__container" >
 
                     <div className="result__title"> Resultat </div>
                     
-                    { analyse.results ? analyse.results.map((analyse, index) => { 
+                    { analyse.results ? analyse.results.map((category, index) => { 
                       return (
                          <div> 
-                           <div className="result__category" >{analyse.category}</div> 
-                           { analyse.exams.map((exam, index) => { 
+                           <div className="result__category" >{category.category}</div> 
+                           { category.subCategories.map((subCategory, index) => { 
                              return ( 
                              <div> 
-                               <div className="result__exam-name"> {exam.exam_name} </div> 
-                               <div className="result__exam-name-comment"> {exam.comment} </div>
+                               <div className="result__exam-name"> {subCategory.subCategoryName} </div> 
+                               <div className="result__exam-name-comment"> {subCategory.comment} </div>
  
                               <Table className={classes.table} aria-label="simple table"> 
                               <TableHead> 
@@ -366,7 +377,7 @@ export default function MesAnalyses() {
                                   <TableCell align="right"></TableCell> 
                               </TableRow> 
                               </TableHead> 
-                              <TableBody> {exam.results.map((row) => ( <TableRow key={row.name}> <TableCell align="">{row.label}</TableCell> 
+                              <TableBody> {subCategory.results.map((row) => ( <TableRow key={row.name}> <TableCell align="">{row.label}</TableCell> 
                               <TableCell align="right">{row.value}</TableCell> 
                               <TableCell align="right">{row.unit}</TableCell> 
                               <TableCell align="right">{row.reference_max} - {row.reference_min} </TableCell> 

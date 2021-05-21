@@ -7,7 +7,11 @@ import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
+import { analyseConfig} from './analyseConfig.js';
 
+
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import axiosInstance from '../../../services/httpInterceptor' 
 import "./AnalyseAdd.scss";
 const customStyles = {
@@ -41,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function AnalyseAdd(props) {
+  
+  const analyseResult = [];
+  const [status, setStatus] = useState(props.analyse.analyse_status);
+  const [analyseCategory, setAnalyseCategory] = useState(props.analyse.analyse_status);
   const [price, setPrice] = useState(props.analyse.price); 
   const [comment, setComment] = useState(props.analyse.comment);
   const [analyseName, setAnalyseName] = useState(props.analyse.analyse_name);
@@ -51,7 +59,8 @@ export default function AnalyseAdd(props) {
   const [fileList, setFileList] = useState(props.analyse.attachements);
   const [ordonnanceList, setOrdonnanceList] = useState([]);
   const [ordonnance, setOrdonnance] = useState([]);
-  const [laboratory, setLaboratory] = useState([]);
+  const [laboratory, setLaboratory] = useState(props.analyse.laboratory);
+  const [results, setResults] = useState(props.analyse.results);
 
   useEffect( () => {
     const url = `${API_URL}/ordonnances/benif/${props.benif}` ;
@@ -77,7 +86,9 @@ export default function AnalyseAdd(props) {
         interpretation_medecin: interpretationDr,
         interpretation_labo: interpretationLabo,
         comment:comment,
-        _id: props.analyse._id
+        analyse_status: status,
+        _id: props.analyse._id,
+        results,
       }
       console.log('props.benif ', dataToSend)
       const url = `${API_URL}/analyses/benif/${props.benif}`
@@ -97,7 +108,9 @@ export default function AnalyseAdd(props) {
         price: price,
         interpretation_medecin: interpretationDr,
         interpretation_labo: interpretationLabo,
+        analyse_status: status,
         comment:comment,
+        results,
       }
       const url = `${API_URL}/analyses/benif/${props.benif}`
       axiosInstance.post(url, dataToSend).then(response => response.data)
@@ -110,18 +123,21 @@ export default function AnalyseAdd(props) {
   }
 
   function sendFiles(analyseId) {
-    if (fileList && fileList.length > 0 && fileList[0]._id) {}
-    else if(fileList.length == 0) {}
-    else {
-      const formData = new FormData(); 
-      for (var x = 0; x < fileList.length; x++) {
-        formData.append(fileList[x].name, fileList[x]);
+    if (fileList) {
+      if (fileList && fileList.length > 0 && fileList[0]._id) {}
+      else if(fileList.length == 0) {}
+      else {
+        const formData = new FormData(); 
+        for (var x = 0; x < fileList.length; x++) {
+          formData.append(fileList[x].name, fileList[x]);
+        }
+        const url = `${API_URL}/analyses/${analyseId}/benif/${props.benif}/upload/${fileList[0].name}`
+        axiosInstance.post(url, formData).then(response => response.data)
+        .then((result) => { }
+        );
       }
-      const url = `${API_URL}/analyses/${analyseId}/benif/${props.benif}/upload/${fileList[0].name}`
-      axiosInstance.post(url, formData).then(response => response.data)
-      .then((result) => { }
-      );
     }
+    
   }
   function deleteFile(e, file, index) {
     setFileList(fileList.filter(item => item.name !== file.name));
@@ -132,7 +148,63 @@ export default function AnalyseAdd(props) {
       array.push(event[i])
     }
     setFileList(array);
-    console.log('file ', array)
+  }
+
+  function handleChangeStatus(event) {
+    setStatus(event.target.value);
+  };
+  
+  function addAnalyseResult() {
+    const newElement = analyseConfig[analyseCategory]
+    setResults(oldArray => {
+      if (oldArray && oldArray.length>0)
+        return [...oldArray, newElement]
+
+      return [newElement]
+    });
+  }
+  function handleChangeAnalyseCategory(event) {
+    setAnalyseCategory(event.target.value)
+  };
+  function handleValueExam(value, indexCateg, indexSubCateg, indexExam) {
+    const res = results;
+    res[indexCateg].subCategories[indexSubCateg].results[indexExam].value = value;
+    setResults(res)
+  }
+  function renderAnalyseResult() {
+    return(
+      <div>
+        
+        {
+         ( results && results.length > 0)? 
+          <div>
+            {
+            results.map((category, indexCateg) => (
+              <div> 
+                <div> {category.category}</div>
+                {
+                  category.subCategories.map((subgategory, indexSubCateg) => (
+                    <div> 
+                      <div> {subgategory.subCategoryName}</div>
+                      {
+                        subgategory.results.map((exam, indexExam) => (
+                          <div className="modal__subGategory-line"> 
+                            <div> {exam.label}</div>
+                            <TextField  label={exam.code} type="text" value={exam.value}
+                              onChange={event => handleValueExam(event.target.value, indexCateg, indexSubCateg, indexExam)}
+                              InputLabelProps={{ shrink: true }} />
+                            <div> {exam.unit}</div>
+                            
+                          </div>
+                        ))} 
+                    </div>
+                  ))} 
+              </div>
+            ))} 
+          </div>  : null
+        }
+      </div>
+    )
   }
   return (
     <Modal
@@ -144,7 +216,7 @@ export default function AnalyseAdd(props) {
           <div className="modal__header">
             <div className="modal__header-title">
               {
-              !props.benif._id ? 'Nouveau analyse' : `Mise à jour d'analyse`
+              !props.analyse._id ? 'Nouveau analyse' : `Mise à jour d'analyse`
               }
             </div>
             <div className="modal__header-close">
@@ -192,14 +264,46 @@ export default function AnalyseAdd(props) {
             <TextField id="date" label="Date de RDV*" type="date" value={dateRealised}
               onChange={event => setDateRealised(event.target.value)}
               InputLabelProps={{ shrink: true }} />
-            <div className="text-area ">interpretation Labo
-              <textarea margin="normal" fullWidth label="interpretation Labo*" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
-            </div>
-            <div className="text-area ">interpretation Dr
-              <textarea margin="normal" fullWidth label="interpretation Dr*" name="firstName"  value={interpretationDr} onChange={event => setInterpretationDr(event.target.value)} />
-            </div>
+            
             <TextField margin="normal" fullWidth label="prix*" name="price"  value={price} onChange={event => setPrice(event.target.value)} />
+            <TextField margin="normal" fullWidth label="interpretation Labo" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
+            <TextField margin="normal" fullWidth label="interpretation Doc" name="firstName"  value={interpretationDr} onChange={event => setInterpretationDr(event.target.value)} />
             <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
+            
+            { props.analyse.ordonnance ? 
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={status}
+                onChange={handleChangeStatus}
+              >
+                
+                <MenuItem value={'Later'}>A venir</MenuItem>
+                <MenuItem value={'Done'}>Terminé</MenuItem>
+              </Select>              
+              : null
+            }
+            {
+            status === 'Done' ?
+              
+            <div className="result_container">
+            <div className="result_container--title"> Resultat</div>
+            <div className="result_container--body">
+           
+            {renderAnalyseResult()}
+            Selection category: <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={analyseCategory}
+              onChange={handleChangeAnalyseCategory}
+            >
+          {analyseConfig.map((name, index) => (
+              <MenuItem key={name.category} value={index}>
+                {name.category}
+              </MenuItem>
+            ))}
+        </Select>  
+            <div className="btn-action" onClick={(e) => addAnalyseResult()}> <FaCalendarPlus>  </FaCalendarPlus>Add analyse</div>
 
             {
             (fileList && fileList.length > 0) ?
@@ -210,14 +314,27 @@ export default function AnalyseAdd(props) {
             }
             <div className={'drag-container'}> 
             <input
-                 type="file" 
-                 onChange={(e) => uploadFile(e.target.files)}/>
+                type="file" 
+                onChange={(e) => uploadFile(e.target.files)}/>
                 
-                 <span>Parcourir mon ordinateur</span>
+                <span>Parcourir mon ordinateur</span>
             </div>
+
+            </div>
+
+          </div> : null
+            }
           </div>
-          <div className={'footer-modal'}>
-          <Button
+          
+        </form>
+      </div>
+    </Container>
+
+          </div>
+
+           <div className="modal__footer">
+             
+           <Button
               variant="contained"
               color="default"
               className={classes.submit}
@@ -229,22 +346,10 @@ export default function AnalyseAdd(props) {
               className={classes.submit}
               onClick={ handleSubmit }
             > {
-              !props.benif._id ? 'Ajouter' : 'Mise à jour'
+              !props.analyse._id ? 'Ajouter' : 'Mise à jour'
               } </Button>
-          </div>
-          
-        </form>
-      </div>
-    </Container>
 
-          </div>
-
-          {/* <div className="modal__footer">
-          <div className = {"modal__button"}
-            onClick={onCreateChannel.bind(this)}
-            disabled={name}
-          >Create</div>
-          </div> */}
+          </div> 
         </Modal>
   );
 }

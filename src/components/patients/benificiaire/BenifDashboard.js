@@ -28,6 +28,7 @@ export default function BenifDashboard() {
 
       const [firstName, setFirstName] = useState('');
       const [lastName, setLastName] = useState('');
+      const [notification, setNotification] = useState('');
 
       useEffect( () => {
         const url = `${API_URL}/benificiares/${id}` ;
@@ -36,6 +37,12 @@ export default function BenifDashboard() {
           const benif = result[0];
           setFirstName(benif.first_name)
           setLastName(benif.last_name)
+        }
+        );
+        const urlNotif = `${API_URL}/benificiares/${id}/notifications` ;
+        axiosInstance.get(urlNotif).then(response => response.data)
+        .then((result) => { 
+          setNotification(result)
         }
         );
       }, []);
@@ -54,10 +61,18 @@ return (
         <div className="container-widget-line">
           <div className="container-widget" onClick={(e) => navigateTo(id + '/consultations')}>
                 <div>
-                <Badge badgeContent={4} color="secondary">
-                  <img src={Logo1}
-                  alt="un triangle aux trois côtés égaux"
-                  className="container-img" /> </Badge>
+                  {
+                    notification.countConsultation > 0 ?
+                    <Badge badgeContent={notification.countConsultation} color="secondary"> 
+                      <img src={Logo1}
+                        alt="un triangle aux trois côtés égaux"
+                        className="container-img" /> 
+                    </Badge> : 
+                    <img src={Logo1}
+                    alt="un triangle aux trois côtés égaux"
+                    className="container-img" /> 
+                  }
+                  
                   <div className="container-label">Consultation</div>
                 </div>
           </div>
@@ -83,17 +98,35 @@ return (
         <div className="container-widget-line">
           <div className="container-widget" onClick={(e) => navigateTo(id + '/analyses')}>
             <div>
-                  <img src={Logo4}
-                alt="un triangle aux trois côtés égaux"
-                className="container-img" />
+
+              {
+                    notification.countAnalyse > 0 ?
+                    <Badge badgeContent={notification.countAnalyse} color="secondary"> 
+                      <img src={Logo4}
+                        alt="un triangle aux trois côtés égaux"
+                        className="container-img" /> 
+                    </Badge> : 
+                    <img src={Logo4}
+                    alt="un triangle aux trois côtés égaux"
+                    className="container-img" /> 
+                  }
                   <div className="container-label">Analyse</div>
                 </div>
           </div>
           <div className="container-widget" onClick={(e) => navigateTo(id + '/radios')}>
           <div>
-          <img src={Logo5}
+
+          {
+            notification.countRadio > 0 ?
+            <Badge badgeContent={notification.countRadio} color="secondary"> 
+              <img src={Logo5}
                 alt="un triangle aux trois côtés égaux"
-                className="container-img"/>
+                className="container-img" /> 
+            </Badge> : 
+            <img src={Logo5}
+            alt="un triangle aux trois côtés égaux"
+            className="container-img" /> 
+          }
                   <div className="container-label">Radio/Scanner</div>
                 </div>
                 

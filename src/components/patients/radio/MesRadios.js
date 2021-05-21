@@ -9,6 +9,7 @@ import {
   BrowserRouter as Router,
   useParams
 } from "react-router-dom";
+import WarningMessage from '../../../shared/component/WarningMessage'
 import { useHistory } from "react-router-dom";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -52,11 +53,11 @@ const mockData =  [
     date_planned: '11/02/2020',
     date_realised: '11/02/2020',
     doctor_name: 'Dr LAMRANI kamal',
-    labo_name: 'Labo DESCARTES',
+    laboratory: 'Labo DESCARTES',
     ordonnance: 'ORDO-33423434',
     interpretation_labo: 'RAS',
     interpretation_doctor: 'labo RAS',
-    note: `Note medecin: cette consultation mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
+    note: `Note medecin: cette radio mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
     comment: 'comment ...',
     result: 
       {
@@ -84,17 +85,34 @@ export default function MesRadios() {
   const [isOpen, setIsOpen] = React.useState(false);
   const [expanded, setExpanded] = React.useState(false);
   const [value, setValue] = React.useState(0);
-  const [consultationList, setConsultationList] = React.useState([]);
+  const [radioList, setRadioList] = React.useState([]);
+  const [displayedRadioList, setdisplayedRadioList] = React.useState([]);
 
+  const [isOpenWarning, setIsOpenWarning] = useState(false);
   const [radio, setRadio] = useState({});
   const [isOpenAdd, setIsOpenAdd] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+
+
+  useEffect( () => {
+    const url = `${API_URL}/benificiares/${id}` ;
+    axiosInstance.get(url).then(response => response.data)
+    .then((result) => { 
+      const benif = result[0];
+      setFirstName(benif.first_name)
+      setLastName(benif.last_name)
+    }
+    );
+    refreshList();
+  }, []);
+
+
   const handleChangeTab = (event, newValue) => {
-    console.log('newValue ', newValue, StatusMapping[newValue] )
     setValue(newValue);
-    const filteredData = mockData.filter(data => 
-      data.status === StatusMapping[newValue])
-      console.log('filteredData ', filteredData)
-    setConsultationList(filteredData)
+    const filteredData = radioList.filter(data => 
+      data.radio_status === StatusMapping[newValue])
+      setdisplayedRadioList(filteredData)
   };
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -114,10 +132,13 @@ export default function MesRadios() {
   }
 
   function refreshList () {
-    const url = `${API_URL}/benificiares/${id}/radio`;
+    const url = `${API_URL}/radios/benif/${id}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
-      setConsultationList(result)
+      setRadioList(result);
+      const filteredData = result.filter(data => 
+        data.radio_status === StatusMapping[value])
+        setdisplayedRadioList(filteredData)
       }
     );
   }
@@ -129,6 +150,29 @@ export default function MesRadios() {
     setIsOpenAdd(false) 
     refreshList();
   }
+
+  function supprimerRadio(analyse) {
+    setRadio(analyse)
+    setIsOpenWarning(true)
+  }
+  function editRadio(analyse) {
+    setRadio(analyse)
+    setIsOpenAdd(true)
+  }
+
+  function onCloseWarning(value) { 
+    setIsOpenWarning(false)
+  }
+  function onConfirm(value) { 
+    setIsOpenWarning(false);
+    const url = `${API_URL}/radios/${radio._id}`;
+    axiosInstance.delete(url).then(response => response.data)
+    .then((result) => {
+      refreshList()
+      }
+    );
+    refreshList()
+  }
   return (
     <div className="container-wrapper">
       <HeaderComponent></HeaderComponent>
@@ -137,10 +181,16 @@ export default function MesRadios() {
         <RadioAdd
           isOpen={isOpenAdd}
           onChange={onChangeAdd}
-          benif= {radio}
+          benif= {id}
+          radio= {radio}
           ></RadioAdd>
       : null
       }
+      <WarningMessage 
+              onCloseWarning={onCloseWarning}
+              isOpenWarning={isOpenWarning}
+              onConfirm={onConfirm}>
+          </WarningMessage>
       <div className="container-body">
       <div className="container-return-action"  onClick={(e) => goBack()}>
         <FaArrowLeft>  </FaArrowLeft> retourner à mon tableau de bord
@@ -149,7 +199,7 @@ export default function MesRadios() {
           Mes Radios
         </div>
         <div className="container-subtitle">
-          liste des Radio pour Mr XXXX XXXX planifiés
+          liste des Radios pour Mr {firstName} {lastName} planifiés
         </div>
 
         <div className="container-right-actions">
@@ -167,56 +217,61 @@ export default function MesRadios() {
         </Tabs>
       <div className={classes.root}>
         {
-          consultationList.map((consultation, index) => {
+          displayedRadioList.map((radio, index) => {
             return (
-              <Accordion expanded={expanded === consultation.id} onChange={handleChange(consultation.id)}>
+              <Accordion expanded={expanded === radio._id} onChange={handleChange(radio._id)}>
                 <AccordionSummary
                   expandIcon={<FaAngleDown />}
                   aria-controls="panel1bh-content"
                   id="panel1bh-header"
                 >
-                  <Typography className='accordion__title'>{consultation.date_planned}</Typography>
-                  <Typography className='accordion__subtitle'>{consultation.labo_name}</Typography>
+                  <Typography className='accordion__title'>{radio.date_prevu}</Typography>
+                  <Typography className='accordion__subtitle'>{radio.laboratory}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                <div>
+                <div className='all_width'>
         
                 <Typography className="padding2">
-                {consultation.note}
+                {radio.note}
                   </Typography> 
                   <div  className="lines">
-                    <div  className="lines__line"> <div className="lines__title">Laboratoire</div><div className="lines__desc">{consultation.labo_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc">{consultation.doctor_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Ordonnance</div><div className="lines__desc">{consultation.ordonnance}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{consultation.date_planned}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date realisé</div><div className="lines__desc">{consultation.date_realised}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">interpretation Labo</div><div className="lines__desc">{consultation.interpretation_labo}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">interpretation Doc</div><div className="lines__desc">{consultation.interpretation_doctor}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{consultation.price}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc" value={consultation.comment}></textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">Laboratoire</div><div className="lines__desc">{radio.laboratory}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc">{radio.ordonnance.consultation.medecin.last_name} {radio.ordonnance.consultation.medecin.first_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Ordonnance</div><div className="lines__desc">{radio.ordonnance.ordonnance_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{radio.date_prevu}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date realisé</div><div className="lines__desc">{radio.date_rdv}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">interpretation Labo</div><div className="lines__desc">{radio.interpretation_labo}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">interpretation Doc</div><div className="lines__desc">{radio.interpretation_medecin}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{radio.price}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc" value={radio.comment}></textarea></div>
         
+                    {
+                    radio.radio_status === 'Done' ?
                     <div className="result__container" >
                     <div className="result__title"> Resultat </div>
                       <div>
                       <div className="result__exam-name"> attachement </div>
                         {
-                          consultation.result.attachement.map((exam, index) => {
+                          radio.attachements.map((exam, index) => {
                             return ( <div className="result__exam-name-comment"> {exam.name} </div> )
                           })
                         }
                         <div className="result__exam-name"> interpretation </div>
-                        <div  className="lines__line"> <textarea className="lines__desc" value={consultation.result.interpretation}></textarea></div>
+                        <div  className="lines__line"> <textarea className="lines__desc" value={radio.result_interpretation}></textarea></div>
 
                         <div className="result__exam-name"> conclusion </div>
-                        <div  className="lines__line"> <textarea className="lines__desc" value={consultation.result.conclusion}></textarea></div>
+                        <div  className="lines__line"> <textarea className="lines__desc" value={radio.result_conclusion}></textarea></div>
                       
                       
                       </div>
 
                     </div>
+                     : null
+                    }
+                    
                     <div  className="lines__footer"> 
-                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
-                      <div className="lines__footer-action" onClick={(e) => onChange()}> <FaCalendarPlus>  </FaCalendarPlus>Modifier</div>
+                      <div className="lines__footer-action" onClick={(e) => supprimerRadio(radio)}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
+                      <div className="lines__footer-action" onClick={(e) => editRadio(radio)}> <FaCalendarPlus>  </FaCalendarPlus>Modifier</div>
                     </div>
                   </div>
                 </div>

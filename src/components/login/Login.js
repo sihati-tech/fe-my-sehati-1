@@ -8,6 +8,7 @@ import "./Login.scss";
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_URL;
+console.log('API_URL ', API_URL)
 export default function Login() {
   const history = useHistory()
   const [email, setEmail] = useState("");

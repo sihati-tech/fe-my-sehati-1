@@ -23,7 +23,7 @@ import WarningMessage from '../../../shared/component/WarningMessage'
 
 import axiosInstance from '../../../services/httpInterceptor' 
 import AnalyseAdd from './AnalyseAdd'
-import MesGraph from './MesGraph';
+// import MesGraph from './MesGraph';
 
 const API_URL = process.env.REACT_APP_URL;
 const useStyles = makeStyles((theme) => ({
@@ -266,12 +266,12 @@ export default function MesAnalyses() {
       : null
       }
       {
-        isOpen ? 
-        <MesGraph
-          isOpen={isOpen}
-          onChange={onChange}
-          ></MesGraph>
-      : null
+      //   isOpen ? 
+      //   <MesGraph
+      //     isOpen={isOpen}
+      //     onChange={onChange}
+      //     ></MesGraph>
+      // : null
       }
       <WarningMessage 
               onCloseWarning={onCloseWarning}

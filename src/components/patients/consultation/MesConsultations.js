@@ -216,8 +216,9 @@ export default function MesConsultations() {
                   <div  className="lines">
                     <div  className="lines__line"> <div className="lines__title">nom</div><div className="lines__desc">{consultation.consultation_name}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc">{consultation.medecin.first_name} {consultation.medecin.last_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date de prise de RDV</div><div className="lines__desc">{consultation.date_prise_rdv}</div></div>
+                    {value === 1 ? <div  className="lines__line"> <div className="lines__title">date de RDV</div><div className="lines__desc">{consultation.date_rdv}</div></div> : null}
                     {value === 0 ? <div  className="lines__line"> <div className="lines__title">date de consultation</div><div className="lines__desc">{consultation.date_consultation}</div></div> : null}
-                    <div  className="lines__line"> <div className="lines__title">date prise de RDV</div><div className="lines__desc">{consultation.date_rdv}</div></div>
                     <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{consultation.price}</div></div>
                     <div  className="lines__line"> <div className="lines__title">commentaire medecin</div><textarea className="lines__desc">{consultation.commentaire_medecin}</textarea></div>
                     <div  className="lines__line"> <div className="lines__title">commentaire</div><textarea className="lines__desc">{consultation.commentaire}</textarea></div>

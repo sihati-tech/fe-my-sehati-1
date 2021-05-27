@@ -238,10 +238,11 @@ export default function MesRadios() {
                     <div  className="lines__line"> <div className="lines__title">Laboratoire</div><div className="lines__desc">{radio.laboratory}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc">{radio.ordonnance.consultation.medecin.last_name} {radio.ordonnance.consultation.medecin.first_name}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Ordonnance</div><div className="lines__desc">{radio.ordonnance.ordonnance_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{radio.date_prevu}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date realisé</div><div className="lines__desc">{radio.date_rdv}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">interpretation Labo</div><div className="lines__desc">{radio.interpretation_labo}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">interpretation Doc</div><div className="lines__desc">{radio.interpretation_medecin}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date prise RDV</div><div className="lines__desc">{radio.date_prise_rdv}</div></div>
+                    {value === 1 ? <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{radio.date_prevu}</div></div> : null}
+                    {value === 0 ? <div  className="lines__line"> <div className="lines__title">date realisé</div><div className="lines__desc">{radio.date_rdv}</div></div> : null}
+                    {/* <div  className="lines__line"> <div className="lines__title">interpretation Labo</div><div className="lines__desc">{radio.interpretation_labo}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">interpretation Doc</div><div className="lines__desc">{radio.interpretation_medecin}</div></div> */}
                     <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{radio.price}</div></div>
                     <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc" value={radio.comment}></textarea></div>
         
@@ -256,8 +257,10 @@ export default function MesRadios() {
                             return ( <div className="result__exam-name-comment"> {exam.name} </div> )
                           })
                         }
-                        <div className="result__exam-name"> interpretation </div>
+                        <div className="result__exam-name"> interpretation Dr</div>
                         <div  className="lines__line"> <textarea className="lines__desc" value={radio.result_interpretation}></textarea></div>
+                        <div className="result__exam-name"> interpretation Labo</div>
+                        <div  className="lines__line"> <textarea className="lines__desc" value={radio.interpretation_labo}></textarea></div>
 
                         <div className="result__exam-name"> conclusion </div>
                         <div  className="lines__line"> <textarea className="lines__desc" value={radio.result_conclusion}></textarea></div>

@@ -159,7 +159,7 @@ export default function RadioAdd(props) {
           <div className="modal__header">
             <div className="modal__header-title">
               {
-              !props.radio._id ? 'Nouveau radio' : `Mise à jour d'radio`
+              !props.radio._id ? 'Nouveau radio' : `Mise à jour une radio`
               }
             </div>
             <div className="modal__header-close">
@@ -204,15 +204,16 @@ export default function RadioAdd(props) {
               onChange={event => setDatePrevu(event.target.value)}
               InputLabelProps={{ shrink: true }} />
 
-            <TextField id="date" label="Date de RDV*" type="date" value={dateRealised}
+            { status === 'Done' ? <TextField id="date" label="Date realisé" type="date" value={dateRealised}
               onChange={event => setDateRealised(event.target.value)}
               InputLabelProps={{ shrink: true }} />
-            <div className="text-area ">interpretation Labo
+              : null }
+            {/* <div className="text-area ">interpretation Labo
               <textarea margin="normal" fullWidth label="interpretation Labo*" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
             </div>
             <div className="text-area ">interpretation Dr
               <textarea margin="normal" fullWidth label="interpretation Dr*" name="firstName"  value={interpretationDr} onChange={event => setInterpretationDr(event.target.value)} />
-            </div>
+            </div> */}
             <TextField margin="normal" fullWidth label="prix*" name="price"  value={price} onChange={event => setPrice(event.target.value)} />
             <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
 
@@ -235,8 +236,11 @@ export default function RadioAdd(props) {
             <div className="result_container--title"> Resultat</div>
             <div className="result_container--body">
 
-            <div className="text-area ">interpretation
+            <div className="text-area ">interpretation Dr
               <textarea className="all-width" margin="normal" fullWidth label="interpretation Labo*" name="firstName"  value={resultInterpretation} onChange={event => setResultInterpretation(event.target.value)} />
+            </div>
+            <div className="text-area ">interpretation Labo
+              <textarea className="all-width" margin="normal" fullWidth label="interpretation Labo*" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
             </div>
             <div className="all-width" className="text-area ">Conclusion
               <textarea margin="normal" fullWidth label="interpretation Dr*" name="firstName"  value={resultConclusion} onChange={event => setResultConclusion(event.target.value)} />

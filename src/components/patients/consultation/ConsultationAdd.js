@@ -48,6 +48,7 @@ export default function ConsultationAdd(props) {
   const [consultationDesc, setConsultationDesc] = useState(props.consultation.consultationDesc);
   const [price, setPrice] = useState(props.consultation.price);
   const [dateRdv, setDateRdv] = useState(props.consultation.date_rdv);
+  const [dateConsultation, setDateConsultation] = useState(props.consultation.date_consultation);
   const [commentDr, setCommentDr] = useState(props.consultation.commentaire_medecin);
   const [comment, setComment] = useState(props.consultation.comment);
   const [medecin, setMedecin] = useState(props.consultation.medecin);
@@ -83,6 +84,7 @@ export default function ConsultationAdd(props) {
         consultation_name: consultationName,
         consultation_desc: consultationDesc,
         date_rdv: dateRdv,
+        date_consultation: dateConsultation,
         commentaire_medecin: commentDr,
         commentaire: comment,
         price: price,
@@ -102,6 +104,7 @@ export default function ConsultationAdd(props) {
         consultation_desc: consultationDesc,
         medecin: medecin,
         date_rdv: dateRdv,
+        date_consultation: dateConsultation,
         commentaire_medecin: commentDr,
         commentaire: comment,
         price: price,
@@ -191,6 +194,12 @@ export default function ConsultationAdd(props) {
             <TextField id="date" label="Date de RDV*" type="date" value={dateRdv}
               onChange={event => setDateRdv(event.target.value)}
               InputLabelProps={{ shrink: true }} />
+            
+            { status === 'Done' ? 
+            <TextField id="date" label="Date de Consultation*" type="date" value={dateConsultation}
+            onChange={event => setDateConsultation(event.target.value)}
+            InputLabelProps={{ shrink: true }} />
+            : null }
             <TextField margin="normal" fullWidth label="Prix" name="consultationName"  value={price} onChange={event => setPrice(event.target.value)} />
             <TextField margin="normal" fullWidth label="Commentaire*" name="consultationName"  value={comment} onChange={event => setComment(event.target.value)} />
             <TextField margin="normal" fullWidth label="Commentaire Médecin*" name="consultationName"  value={commentDr} onChange={event => setCommentDr(event.target.value)} />

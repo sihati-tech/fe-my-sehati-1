@@ -327,10 +327,15 @@ export default function MesAnalyses() {
                     <div  className="lines__line"> <div className="lines__title">Medecin Presc.</div><div className="lines__desc">{analyse.ordonnance.consultation.medecin.last_name} {analyse.ordonnance.consultation.medecin.first_name}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Ordonnance</div><div className="lines__desc">{analyse.ordonnance.ordonnance_name}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Date Ordonnance</div><div className="lines__desc">{analyse.ordonnance.date_rdv}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{analyse.date_prevu}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date realisé</div><div className="lines__desc">{analyse.date_rdv}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">interpretation Labo</div><div className="lines__desc">{analyse.interpretation_labo}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">interpretation Doc</div><div className="lines__desc">{analyse.interpretation_medecin}</div></div>
+                      <div  className="lines__line"> <div className="lines__title">date prise RDV</div><div className="lines__desc">{analyse.date_prise_rdv.split('T')[0]}</div></div>
+                    {
+                      analyse.analyse_status !== 'Done' ?
+                      <div  className="lines__line"> <div className="lines__title">date prevue</div><div className="lines__desc">{analyse.date_prevu}</div></div>
+                      : null }
+                    {
+                      analyse.analyse_status === 'Done' ?
+                      <div  className="lines__line"> <div className="lines__title">date realisé</div><div className="lines__desc">{analyse.date_rdv}</div></div> 
+                    : null }
                     <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{analyse.price}</div></div>
                     <div  className="lines__line"> <div className="lines__title">comment</div><textarea className="lines__desc" value={analyse.comment}></textarea></div>
         
@@ -352,10 +357,15 @@ export default function MesAnalyses() {
                     </div>
                      : null
                     }
+                    {
+                      analyse.analyse_status === 'Done' ?
+
                     <div className="result__container" >
 
                     <div className="result__title"> Resultat </div>
                     
+                    <div  className="lines__line"> <div className="lines__title">interpretation Labo</div><div className="lines__desc">{analyse.interpretation_labo}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">interpretation Doc</div><div className="lines__desc">{analyse.interpretation_medecin}</div></div>
                     { analyse.results ? analyse.results.map((category, index) => { 
                       return (
                          <div> 
@@ -388,7 +398,8 @@ export default function MesAnalyses() {
                     </div> ) })} 
                     </div> )}) : null}
                     </div>
-
+                    : null
+                    }
                     <div  className="lines__footer"> 
                       <div className="lines__footer-action" onClick={(e) => supprimerAnalyse(analyse)}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
                       <div className="lines__footer-action" onClick={(e) => editAnalyse(analyse)}> <FaCalendarPlus>  </FaCalendarPlus>Modifier</div>

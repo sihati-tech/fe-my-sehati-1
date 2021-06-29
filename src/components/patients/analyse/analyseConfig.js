@@ -9,7 +9,7 @@ export const analyseConfig = [ {
         unit: 'Tera/L',
         reference_min: '4.28',
         reference_max: '5.79',
-        historique:'23Tera/L'
+        historique:''
       },
       {
         code: 'VGM',
@@ -17,7 +17,7 @@ export const analyseConfig = [ {
         unit: 'fl',
         reference_min: '78.0',
         reference_max: '97.0',
-        historique:'23Tera/L'
+        historique:''
       }
     ]
   },
@@ -30,7 +30,7 @@ export const analyseConfig = [ {
         unit: 'Tera/L',
         reference_min: '4.28',
         reference_max: '5.79',
-        historique:'23Tera/L'
+        historique:''
       },
       {
         code: 'ZERE',
@@ -38,7 +38,7 @@ export const analyseConfig = [ {
         unit: 'fl',
         reference_min: '78.0',
         reference_max: '97.0',
-        historique:'23Tera/L'
+        historique:''
       }
     ]
   }
@@ -55,7 +55,7 @@ export const analyseConfig = [ {
         unit: 'Tera/L',
         reference_min: '4.28',
         reference_max: '5.79',
-        historique:'23Tera/L'
+        historique:''
       },
       {
         code: 'VGM',
@@ -63,7 +63,7 @@ export const analyseConfig = [ {
         unit: 'fl',
         reference_min: '78.0',
         reference_max: '97.0',
-        historique:'23Tera/L'
+        historique:''
       }
     ]
   },
@@ -76,7 +76,7 @@ export const analyseConfig = [ {
         unit: 'Tera/L',
         reference_min: '4.28',
         reference_max: '5.79',
-        historique:'23Tera/L'
+        historique:''
       },
       {
         code: 'ZERE',
@@ -84,7 +84,7 @@ export const analyseConfig = [ {
         unit: 'fl',
         reference_min: '78.0',
         reference_max: '97.0',
-        historique:'23Tera/L'
+        historique:''
       }
     ]
   }

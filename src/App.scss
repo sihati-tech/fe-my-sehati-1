@@ -46,3 +46,23 @@ $width-bar:180px;
 .all-width {
   width: 100%
 }
+
+@media (max-width: 767px) {
+  input[type="text"]
+  {
+      font-size:12px;
+  }
+
+  input[type="date"]
+  {
+    width: 110px;
+  }
+
+  label {
+    font-size:12px !important;
+    color: red;
+  }
+  .MuiInputBase-root { 
+    font-size: 12px !important;
+  }
+}

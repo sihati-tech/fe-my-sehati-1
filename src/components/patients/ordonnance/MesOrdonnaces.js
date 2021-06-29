@@ -283,12 +283,8 @@ export default function MesOrdonnaces() {
           onClick={handleChangeFilter('Generalist')}>Généraliste</div>
           <div className={filter === 'Specialist' ? "container-filter-top-actif" : "container-filter-top" }
           onClick={handleChangeFilter('Specialist')}>Specialiste</div>
-          <div className={filter === 'Radiologue' ? "container-filter-top-actif" : "container-filter-top" }
-          onClick={handleChangeFilter('Radiologue')}>Radiologue</div>
           <div className={filter === 'Dentiste' ? "container-filter-top-actif" : "container-filter-top" }
           onClick={handleChangeFilter('Dentiste')}>Dentiste</div>
-          <div className={filter === 'Opticien' ? "container-filter-top-actif" : "container-filter-top" }
-          onClick={handleChangeFilter('Opticien')}>Opticien</div>
         </div>
 
 
@@ -317,7 +313,8 @@ export default function MesOrdonnaces() {
                     <div  className="lines__line"> <div className="lines__title">Consultation</div><div className="lines__desc-clickable">{ordonnance.consultation.consultation_name}</div></div>
                     <div  className="lines__line"> <div className="lines__title">date de RDV</div><div className="lines__desc">{ordonnance.date_rdv}</div></div>
                     <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{ordonnance.price}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">commentaire medecin</div><div className="lines__desc">{ordonnance.comment_medecin}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">commentaire medecin</div><textarea className="lines__desc" value={ordonnance.comment_medecin}></textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">commentaire patient</div><textarea className="lines__desc" value={ordonnance.comment}></textarea></div>
                     <div  className="lines__line"> <div className="lines__title">document</div> 
                     <div>
                       {ordonnance.attachements.map(item => {
@@ -325,8 +322,6 @@ export default function MesOrdonnaces() {
                       })}
                     </div>
                     </div>
-                    <div  className="lines__line"> <div className="lines__title">commentaire patient</div><textarea className="lines__desc">{ordonnance.comment}</textarea></div>
-                    
                     <div  className="lines__footer"> 
                       <div className="lines__footer-action" onClick={(e) => supprimerOrdonnance(ordonnance)}> <FaCalendarPlus>  </FaCalendarPlus>Supprimer</div>
                       <div className="lines__footer-action" onClick={(e) => editOrdonnance(ordonnance)}> <FaCalendarPlus>  </FaCalendarPlus>Modifier</div>

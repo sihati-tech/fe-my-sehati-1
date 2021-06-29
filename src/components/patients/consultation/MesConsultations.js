@@ -112,11 +112,11 @@ export default function MesConsultations() {
     const url = `${API_URL}/consultation/benif/${id}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
-      setConsultationList(result);
-      const filteredData = result.filter(data => 
+        setConsultationList(result);
+        const filteredData = result.filter(data => 
         data.consultation_status === StatusMapping[value] && data.medecin.speciality === filter)
         setdisplayedConsultationList(filteredData)
-        }
+      }
     );
   }
   function onChange(value) { 
@@ -135,6 +135,14 @@ export default function MesConsultations() {
   }
   function onCloseWarning(value) { 
     setIsOpenWarning(false)
+  }
+
+  function downloadFile(file) {
+    console.log('file ', file)
+    const url = `${API_URL}/file/download`;
+    axiosInstance.post(url, file).then(response => response.data)
+    .then((result) => {  }
+    );
   }
   return (
     <div className="container-wrapper">
@@ -175,12 +183,8 @@ export default function MesConsultations() {
           onClick={handleChangeFilter('Generalist')}>Généraliste</div>
           <div className={filter === 'Specialist' ? "container-filter-top-actif" : "container-filter-top" }
           onClick={handleChangeFilter('Specialist')}>Specialiste</div>
-          <div className={filter === 'Radiologue' ? "container-filter-top-actif" : "container-filter-top" }
-          onClick={handleChangeFilter('Radiologue')}>Radiologue</div>
           <div className={filter === 'Dentiste' ? "container-filter-top-actif" : "container-filter-top" }
           onClick={handleChangeFilter('Dentiste')}>Dentiste</div>
-          <div className={filter === 'Opticien' ? "container-filter-top-actif" : "container-filter-top" }
-          onClick={handleChangeFilter('Opticien')}>Opticien</div>
         </div>
 
 
@@ -216,16 +220,20 @@ export default function MesConsultations() {
                   <div  className="lines">
                     <div  className="lines__line"> <div className="lines__title">nom</div><div className="lines__desc">{consultation.consultation_name}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc">{consultation.medecin.first_name} {consultation.medecin.last_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">date de prise de RDV</div><div className="lines__desc">{consultation.date_prise_rdv}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">date de prise de RDV</div><div className="lines__desc">{consultation.date_prise_rdv.split('T')[0]}</div></div>
                     {value === 1 ? <div  className="lines__line"> <div className="lines__title">date de RDV</div><div className="lines__desc">{consultation.date_rdv}</div></div> : null}
                     {value === 0 ? <div  className="lines__line"> <div className="lines__title">date de consultation</div><div className="lines__desc">{consultation.date_consultation}</div></div> : null}
                     <div  className="lines__line"> <div className="lines__title">prix</div><div className="lines__desc">{consultation.price}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">commentaire medecin</div><textarea className="lines__desc">{consultation.commentaire_medecin}</textarea></div>
-                    <div  className="lines__line"> <div className="lines__title">commentaire</div><textarea className="lines__desc">{consultation.commentaire}</textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">commentaire medecin</div><textarea className="lines__desc" value={consultation.commentaire_medecin}></textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">commentaire</div><textarea className="lines__desc"value={consultation.commentaire}></textarea></div>
                     
                     <div  className="lines__line"> 
-                      <div className="lines__title">status</div>
-                      <div className="lines__last-line-desc"> {consultation.consultation_status}</div>
+                      <div className="lines__title">attachement</div>
+                      {
+                          consultation.attachements.map((exam, index) => {
+                            return ( <div className="lines__desc"  onClick={(e) => downloadFile(exam)}> {exam.name} </div> )
+                          })
+                        }
                     </div>
 
                     <div  className="lines__footer"> 

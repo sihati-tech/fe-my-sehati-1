@@ -90,7 +90,6 @@ export default function AnalyseAdd(props) {
         _id: props.analyse._id,
         results,
       }
-      console.log('props.benif ', dataToSend)
       const url = `${API_URL}/analyses/benif/${props.benif}`
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
@@ -256,18 +255,20 @@ export default function AnalyseAdd(props) {
 
             <TextField margin="normal" fullWidth label="Nom analyse*" name="lastName" value={analyseName} onChange={event => setAnalyseName(event.target.value)} />
             <TextField margin="normal" fullWidth label="Laboratoire*" name="lastName" value={laboratory} onChange={event => setLaboratory(event.target.value)} /> 
-            
+            {
+            status !== 'Done' ?
             <TextField id="date" label="Date prevu*" type="date" value={datePrevu}
               onChange={event => setDatePrevu(event.target.value)}
-              InputLabelProps={{ shrink: true }} />
-
+              InputLabelProps={{ shrink: true }} /> 
+              : null }
+            {
+            status === 'Done' ?
             <TextField id="date" label="Date de RDV*" type="date" value={dateRealised}
               onChange={event => setDateRealised(event.target.value)}
               InputLabelProps={{ shrink: true }} />
+              : null }
             
             <TextField margin="normal" fullWidth label="prix*" name="price"  value={price} onChange={event => setPrice(event.target.value)} />
-            <TextField margin="normal" fullWidth label="interpretation Labo" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
-            <TextField margin="normal" fullWidth label="interpretation Doc" name="firstName"  value={interpretationDr} onChange={event => setInterpretationDr(event.target.value)} />
             <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
             
             { props.analyse.ordonnance ? 
@@ -290,6 +291,8 @@ export default function AnalyseAdd(props) {
             <div className="result_container--title"> Resultat</div>
             <div className="result_container--body">
            
+            <TextField margin="normal" fullWidth label="interpretation Labo" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
+            <TextField margin="normal" fullWidth label="interpretation Doc" name="firstName"  value={interpretationDr} onChange={event => setInterpretationDr(event.target.value)} />
             {renderAnalyseResult()}
             Selection category: <Select
               labelId="demo-simple-select-label"

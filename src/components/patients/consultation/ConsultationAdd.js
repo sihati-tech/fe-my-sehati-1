@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 import axiosInstance from '../../../services/httpInterceptor' 
+import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
 
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -43,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function ConsultationAdd(props) {
+  const [fileList, setFileList] = useState(props.consultation.attachements);
 
   const [consultationName, setConsultationName] = useState(props.consultation.consultation_name);
   const [consultationDesc, setConsultationDesc] = useState(props.consultation.consultationDesc);
@@ -50,7 +52,7 @@ export default function ConsultationAdd(props) {
   const [dateRdv, setDateRdv] = useState(props.consultation.date_rdv);
   const [dateConsultation, setDateConsultation] = useState(props.consultation.date_consultation);
   const [commentDr, setCommentDr] = useState(props.consultation.commentaire_medecin);
-  const [comment, setComment] = useState(props.consultation.comment);
+  const [comment, setComment] = useState(props.consultation.commentaire);
   const [medecin, setMedecin] = useState(props.consultation.medecin);
   const [medecinList, setMedecinList] = useState([]);
   const [speciality, setSpeciality] = useState('Generalist');
@@ -78,6 +80,34 @@ export default function ConsultationAdd(props) {
       setMedecinList(doctorList)
     });
   }
+
+  function sendFiles(analyseId) {
+    if (fileList) {
+      if (fileList && fileList.length > 0 && fileList[0]._id) {}
+      else if(fileList.length == 0) {}
+      else {
+        const formData = new FormData(); 
+        for (var x = 0; x < fileList.length; x++) {
+          formData.append(fileList[x].name, fileList[x]);
+        }
+        const url = `${API_URL}/consultation/${analyseId}/benif/${props.benif}/upload/${fileList[0].name}`
+        axiosInstance.post(url, formData).then(response => response.data)
+        .then((result) => { }
+        );
+      }
+    }
+    
+  }
+  function deleteFile(e, file, index) {
+    setFileList(fileList.filter(item => item.name !== file.name));
+  }
+  function uploadFile(event) {
+    const array = []
+    for (let i=0; i<event.length; i++) {
+      array.push(event[i])
+    }
+    setFileList(array);
+  }
   function handleSubmit(event) {
     if (props.consultation.medecin) {
       const dataToSend = {
@@ -92,10 +122,12 @@ export default function ConsultationAdd(props) {
         _id: props.consultation._id
       }
       const url = `${API_URL}/consultation/benif/${props.benif}`;
-      console.log('url ', url, dataToSend)
-    
       axiosInstance.post(url, dataToSend).then(response => response.data)
-      .then((result) => { closeModal() }
+      .then((result) => { 
+        const analyseId = result._id;
+        sendFiles(analyseId);
+        closeModal() 
+      }
       );
     }
     else if (medecin ) {
@@ -113,7 +145,10 @@ export default function ConsultationAdd(props) {
       console.log('url ', url, dataToSend)
     
       axiosInstance.post(url, dataToSend).then(response => response.data)
-      .then((result) => { closeModal() }
+      .then((result) => { 
+        const analyseId = result._id;
+        sendFiles(analyseId);
+        closeModal() }
       );
     }
   }
@@ -203,7 +238,20 @@ export default function ConsultationAdd(props) {
             <TextField margin="normal" fullWidth label="Prix" name="consultationName"  value={price} onChange={event => setPrice(event.target.value)} />
             <TextField margin="normal" fullWidth label="Commentaire*" name="consultationName"  value={comment} onChange={event => setComment(event.target.value)} />
             <TextField margin="normal" fullWidth label="Commentaire Médecin*" name="consultationName"  value={commentDr} onChange={event => setCommentDr(event.target.value)} />
-
+            {
+            (fileList && fileList.length > 0) ?
+              (fileList).map((item, index) => {
+                return (<div> {item.name} <FaTrash onClick={(e) => deleteFile(e, item, index)}></FaTrash></div>);
+              })
+              : null
+            }
+            <div className={'drag-container'}> 
+            <input
+                type="file" 
+                onChange={(e) => uploadFile(e.target.files)}/>
+                
+                <span>Parcourir mon ordinateur</span>
+            </div>
             { props.consultation.medecin ? 
               <Select
                 labelId="demo-simple-select-label"

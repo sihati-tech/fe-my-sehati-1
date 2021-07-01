@@ -11,7 +11,7 @@ export default function DoctorDashboard() {
 
   return (
     <div className="login">
-      Welcome doctors
+      Welcome doctor
     </div>
   );
 }

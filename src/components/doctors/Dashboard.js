@@ -8,7 +8,7 @@ export default function DoctorDashboard() {
 
   return (
     <div className="login">
-      Welcome doctor
+      Welcome doctor a
     </div>
   );
 }

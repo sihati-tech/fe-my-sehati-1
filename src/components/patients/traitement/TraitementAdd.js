@@ -66,6 +66,7 @@ export default function TraitementAdd(props) {
   const [startDate, setStartDate] = useState(props.traitement.start_date);
   const [endDate, setEndDate] = useState(props.traitement.end_date);
   const [duration, setDuration] = useState(props.traitement.duration);
+  const [restDuration, setRestDuration] = useState(props.traitement.rest_duration);
   const [subTraitements, setSubTraitements] = useState(props.traitement.subTraitments);
 
   useEffect( () => {
@@ -87,6 +88,7 @@ export default function TraitementAdd(props) {
         traitement_name: traitementName,
         pathologie: pathologie,
         traitement_duration: duration,
+        rest_duration: restDuration,
         subTraitments: subTraitements,
         comment:comment,
         comment_personnel_traitment :commentPersonnelTraitment,
@@ -225,6 +227,7 @@ export default function TraitementAdd(props) {
                 <MenuItem value={'Tension'}>Tension</MenuItem>
                 <MenuItem value={'Oxymetrie'}>Oxymétrie</MenuItem>
                 <MenuItem value={'Glycemie'}>Glycémie</MenuItem>
+                <MenuItem value={'Medicament'}>Medicament</MenuItem>
                 <MenuItem value={'Autre'}>Autre</MenuItem>
               </Select> 
               <div className="btn-action" onClick={(e) => addResultLine(subTraitement, indexSubTraitement)}> <FaCalendarPlus>  </FaCalendarPlus>Ajouter une ligne</div>
@@ -330,6 +333,7 @@ export default function TraitementAdd(props) {
             onChange={event => setEndDate(event.target.value)}
             InputLabelProps={{ shrink: true }} />
             <TextField margin="normal" fullWidth label="durée*" name="lastName" value={duration} onChange={event => setDuration(event.target.value)} /> 
+            <TextField margin="normal" fullWidth label="durée restante*" name="lastName" value={restDuration} onChange={event => setRestDuration(event.target.value)} /> 
 
             <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
             <TextField margin="normal" fullWidth label=" Comment Personnel Traitment*" name="firstName"  value={commentPersonnelTraitment} onChange={event => setCommentPersonnelTraitment(event.target.value)} />

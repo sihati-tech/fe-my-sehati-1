@@ -133,3 +133,14 @@
     font-size: 8px;
   }
 }
+.hidden {
+  .MuiBadge-badge {
+    visibility: hidden;
+  }
+}
+.badge-green {
+  .MuiBadge-badge {
+    background-color: orange;
+    color: white;
+  }
+}

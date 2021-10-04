@@ -87,15 +87,18 @@ return (
           <div className="container-widget" onClick={(e) => navigateTo(id + '/traitements')}>
           <div>
             {
-                notification.countTraitement > 0 ?
-                <Badge badgeContent={notification.countTraitement} color="secondary"> 
-                  <img src={Logo3}
-                    alt="un triangle aux trois côtés égaux"
-                    className="container-img" /> 
-                </Badge> : 
-                <img src={Logo3}
-                alt="un triangle aux trois côtés égaux"
-                className="container-img" /> 
+                <Badge badgeContent={notification.countTraitement} color="secondary" className={` ${notification.countTraitement > 0 ? "" : "hidden"}`}> 
+                  <Badge badgeContent={notification.countTraitement} 
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'left'
+                  }}
+                  className={`${notification.countTraitementInProgress > 0 ? "badge-green" : "hidden"}`}> 
+                    <img src={Logo3}
+                      alt="un triangle aux trois côtés égaux"
+                      className="container-img" /> 
+                  </Badge>
+                </Badge>
               }
               <div className="container-label">Traitement</div>
             </div>

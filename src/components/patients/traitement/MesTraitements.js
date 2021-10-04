@@ -234,6 +234,7 @@ export default function MesTraitements() {
                     <div  className="lines__line"> <div className="lines__title">Date debut</div><div className="lines__desc">{traitement.start_date}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Date fin</div><textarea className="lines__desc" value={traitement.end_date}></textarea></div>
                     <div  className="lines__line"> <div className="lines__title">Durée</div><textarea className="lines__desc" value={traitement.traitement_duration}></textarea></div>
+                    <div  className="lines__line"> <div className="lines__title">Durée restante</div><textarea className="lines__desc" value={traitement.rest_duration}></textarea></div>
                     <div  className="lines__line"> <div className="lines__title">commentaire</div><textarea className="lines__desc" value={traitement.comment}></textarea></div>
                     {
                     traitement.attachements.length > 0 ?

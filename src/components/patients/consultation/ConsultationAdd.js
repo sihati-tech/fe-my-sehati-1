@@ -8,6 +8,8 @@ import Modal from 'react-modal';
 import axiosInstance from '../../../services/httpInterceptor' 
 import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
 
+// or @mui/lab/Adapter{Dayjs,Luxon,Moment} or any valid date-io adapter
+
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -27,7 +29,10 @@ const customStyles = {
     padding: 0
   }
 };
-const filterList = [{code: 'Generalist', label: 'Généraliste'}, {code: 'Specialist', label: 'Spécialiste'}]
+const filterList = [
+  {code: 'Generalist', label: 'Généraliste'},
+  {code: 'Specialist', label: 'Spécialiste'},
+  {code: 'Dentiste', label: 'Dentiste'},]
 const API_URL = process.env.REACT_APP_URL;
 
 const useStyles = makeStyles((theme) => ({
@@ -50,6 +55,7 @@ export default function ConsultationAdd(props) {
   const [consultationDesc, setConsultationDesc] = useState(props.consultation.consultationDesc);
   const [price, setPrice] = useState(props.consultation.price);
   const [dateRdv, setDateRdv] = useState(props.consultation.date_rdv);
+  const [timeRdv, setTimeRdv] = useState(props.consultation.time_rdv);
   const [dateConsultation, setDateConsultation] = useState(props.consultation.date_consultation);
   const [commentDr, setCommentDr] = useState(props.consultation.commentaire_medecin);
   const [comment, setComment] = useState(props.consultation.commentaire);
@@ -114,6 +120,7 @@ export default function ConsultationAdd(props) {
         consultation_name: consultationName,
         consultation_desc: consultationDesc,
         date_rdv: dateRdv,
+        time_rdv: timeRdv,
         date_consultation: dateConsultation,
         commentaire_medecin: commentDr,
         commentaire: comment,
@@ -136,6 +143,7 @@ export default function ConsultationAdd(props) {
         consultation_desc: consultationDesc,
         medecin: medecin,
         date_rdv: dateRdv,
+        time_rdv: timeRdv,
         date_consultation: dateConsultation,
         commentaire_medecin: commentDr,
         commentaire: comment,
@@ -226,10 +234,12 @@ export default function ConsultationAdd(props) {
             {/* <TextField margin="normal" fullWidth label="Medcin*" name="consultationName"  value={medecin} onChange={event => setMedecin(event.target.value)} /> */}
             <TextField margin="normal" fullWidth label="Nom*" name="consultationName"  value={consultationName} onChange={event => setConsultationName(event.target.value)} />
             <TextField margin="normal" fullWidth label="Description*" name="consultationDesc" value={consultationDesc} onChange={event => setConsultationDesc(event.target.value)} />
-            <TextField id="date" label="Date de RDV*" type="date" value={dateRdv}
+            <TextField id="date" label="Date du RDV*" type="date" value={dateRdv}
               onChange={event => setDateRdv(event.target.value)}
               InputLabelProps={{ shrink: true }} />
-            
+            <TextField id="date" label="L'heure" type="time" value={timeRdv} className={'input-min-width'}
+              onChange={event => setTimeRdv(event.target.value)}
+              InputLabelProps={{ shrink: true }} />
             { status === 'Done' ? 
             <TextField id="date" label="Date de Consultation*" type="date" value={dateConsultation}
             onChange={event => setDateConsultation(event.target.value)}

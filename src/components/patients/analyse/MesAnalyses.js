@@ -313,7 +313,7 @@ export default function MesAnalyses() {
                   aria-controls="panel1bh-content"
                   id="panel1bh-header"
                 >
-                  <Typography className='accordion__title'>{analyse.date_rdv}</Typography>
+                  <Typography className='accordion__title'>{analyse.date_prevu}</Typography>
                   <Typography className='accordion__subtitle'>{analyse.laboratory}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
@@ -324,7 +324,7 @@ export default function MesAnalyses() {
                   </Typography> 
                   <div  className="lines">
                     <div  className="lines__line"> <div className="lines__title">Doc Laboratoire</div><div className="lines__desc">{analyse.laboratory}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">Medecin Presc.</div><div className="lines__desc">{analyse.ordonnance.consultation.medecin.last_name} {analyse.ordonnance.consultation.medecin.first_name}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">Medecin Presc.</div><div className="lines__desc">{analyse.ordonnance.consultation ? analyse.ordonnance.consultation.medecin.last_name : ''} {analyse.ordonnance.consultation ? analyse.ordonnance.consultation.medecin.first_name : ''}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Ordonnance</div><div className="lines__desc">{analyse.ordonnance.ordonnance_name}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Date Ordonnance</div><div className="lines__desc">{analyse.ordonnance.date_rdv}</div></div>
                       <div  className="lines__line"> <div className="lines__title">date prise RDV</div><div className="lines__desc">{analyse.date_prise_rdv.split('T')[0]}</div></div>

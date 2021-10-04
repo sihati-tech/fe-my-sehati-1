@@ -8,8 +8,6 @@ import Modal from 'react-modal';
 import axiosInstance from '../../../services/httpInterceptor' 
 import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
 
-// or @mui/lab/Adapter{Dayjs,Luxon,Moment} or any valid date-io adapter
-
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Autocomplete from '@material-ui/lab/Autocomplete';

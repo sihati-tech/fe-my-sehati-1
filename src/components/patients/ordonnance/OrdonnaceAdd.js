@@ -209,6 +209,7 @@ export default function ConsultationAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
+              disabled={!ordonnanceName || !dateRDV || !consultation}
             > {
               !props.ordonnance._id ? 'Ajouter' : 'Mise à jour'
               } </Button>

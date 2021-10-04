@@ -94,7 +94,8 @@
 
 .content-modal {
   height: 300px;
-  overflow: scroll; 
+  overflow: scroll;
+  padding-top: 10px;
   @media (max-width: 767px) {
       height: 260px;
   }

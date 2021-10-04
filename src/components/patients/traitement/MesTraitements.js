@@ -225,7 +225,7 @@ export default function MesTraitements() {
                   </Typography> 
                   <div  className="lines">
                     <div  className="lines__line"> <div className="lines__title">nom du traitement</div><div className="lines__desc">{traitement.traitement_name}</div></div>
-                    <div  className="lines__line"> <div className="lines__title">pathologie</div><div className="lines__desc">{traitement.pathologie} {traitement.ordonnance.consultation ? traitement.ordonnance.consultation.medecin.first_name: ''}</div></div>
+                    <div  className="lines__line"> <div className="lines__title">pathologie</div><div className="lines__desc">{traitement.pathologie}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Ordonnance</div><div className="lines__desc">{traitement.ordonnance.ordonnance_name}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Date Ordonnance</div><div className="lines__desc">{traitement.ordonnance.date_rdv}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Medecin Presc.</div><div className="lines__desc">{traitement.ordonnance.consultation ? traitement.ordonnance.consultation.medecin.last_name: ''} {traitement.ordonnance.consultation ? traitement.ordonnance.consultation.medecin.first_name: ''}</div></div>

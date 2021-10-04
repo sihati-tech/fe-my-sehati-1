@@ -238,7 +238,6 @@ export default function MesOrdonnaces() {
     setIsOpen(true)
   }
   function downloadFile(file) {
-    console.log('file ', file)
     const url = `${API_URL}/file/download`;
     axiosInstance.post(url, file).then(response => response.data)
     .then((result) => {  }

@@ -279,6 +279,7 @@ export default function RadioAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
+              disabled={!ordonnance || !radioName || !laboratory || !datePrevu}
             > {
               !props.radio._id ? 'Ajouter' : 'Mise à jour'
               } </Button>

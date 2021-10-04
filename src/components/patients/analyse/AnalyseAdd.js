@@ -348,6 +348,7 @@ export default function AnalyseAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
+              disabled={!ordonnance || !analyseName || !laboratory || !datePrevu}
             > {
               !props.analyse._id ? 'Ajouter' : 'Mise à jour'
               } </Button>

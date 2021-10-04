@@ -385,6 +385,7 @@ export default function TraitementAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
+              disabled={!traitementName || !ordonnance || !startDate || !endDate}
             > {
               !props.traitement._id ? 'Ajouter' : 'Mise à jour'
               } </Button>

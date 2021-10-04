@@ -285,6 +285,7 @@ export default function ConsultationAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
+              disabled={!medecin || !consultationName || !dateRdv}
             > {
               !props.consultation._id ? 'Ajouter' : 'Mise à jour'
               } </Button>

@@ -87,8 +87,8 @@ return (
           <div className="container-widget" onClick={(e) => navigateTo(id + '/traitements')}>
           <div>
             {
-                <Badge badgeContent={notification.countTraitement} color="secondary" className={` ${notification.countTraitement > 0 ? "" : "hidden"}`}> 
-                  <Badge badgeContent={notification.countTraitement} 
+                <Badge badgeContent={notification.countTraitement} color="secondary"> 
+                  <Badge badgeContent={notification.countTraitementInProgress} 
                   anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'left'

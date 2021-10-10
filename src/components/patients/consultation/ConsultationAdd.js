@@ -6,11 +6,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 import axiosInstance from '../../../services/httpInterceptor' 
-import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { CircularProgress } from '@material-ui/core';
 import "./ConsultationAdd.scss";
 const customStyles = {
   content : {
@@ -47,8 +48,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function ConsultationAdd(props) {
-  const [fileList, setFileList] = useState(props.consultation.attachements);
 
+  const [loading, setLoading] = useState(false);
+  const [fileList, setFileList] = useState(props.consultation.attachements);
   const [consultationName, setConsultationName] = useState(props.consultation.consultation_name);
   const [consultationDesc, setConsultationDesc] = useState(props.consultation.consultationDesc);
   const [price, setPrice] = useState(props.consultation.price);
@@ -87,18 +89,22 @@ export default function ConsultationAdd(props) {
 
   function sendFiles(analyseId) {
     if (fileList) {
-      if (fileList && fileList.length > 0 && fileList[0]._id) {}
-      else if(fileList.length == 0) {}
+      if (fileList && fileList.length > 0 && fileList[0]._id) {closeModal();}
+      else if(fileList.length == 0) {closeModal();}
       else {
         const formData = new FormData(); 
         for (var x = 0; x < fileList.length; x++) {
-          formData.append(fileList[x].name, fileList[x]);
+          formData.append("file", fileList[x], fileList[x].name);
         }
         const url = `${API_URL}/consultation/${analyseId}/benif/${props.benif}/upload/${fileList[0].name}`
         axiosInstance.post(url, formData).then(response => response.data)
-        .then((result) => { }
+        .then((result) => { 
+          closeModal();
+        }
         );
       }
+    } else {
+      closeModal();
     }
     
   }
@@ -113,6 +119,7 @@ export default function ConsultationAdd(props) {
     setFileList(array);
   }
   function handleSubmit(event) {
+    setLoading(true);
     if (props.consultation.medecin) {
       const dataToSend = {
         consultation_name: consultationName,
@@ -131,7 +138,6 @@ export default function ConsultationAdd(props) {
       .then((result) => { 
         const analyseId = result._id;
         sendFiles(analyseId);
-        closeModal() 
       }
       );
     }
@@ -148,13 +154,11 @@ export default function ConsultationAdd(props) {
         price: price,
       }
       const url = `${API_URL}/consultation/benif/${props.benif}`;
-      console.log('url ', url, dataToSend)
-    
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const analyseId = result._id;
         sendFiles(analyseId);
-        closeModal() }
+      }
       );
     }
   }
@@ -231,7 +235,7 @@ export default function ConsultationAdd(props) {
             }     
             {/* <TextField margin="normal" fullWidth label="Medcin*" name="consultationName"  value={medecin} onChange={event => setMedecin(event.target.value)} /> */}
             <TextField margin="normal" fullWidth label="Nom*" name="consultationName"  value={consultationName} onChange={event => setConsultationName(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Description*" name="consultationDesc" value={consultationDesc} onChange={event => setConsultationDesc(event.target.value)} />
+            <TextField margin="normal" fullWidth label="description" name="consultationDesc" value={consultationDesc} onChange={event => setConsultationDesc(event.target.value)} />
             <TextField id="date" label="Date du RDV*" type="date" value={dateRdv}
               onChange={event => setDateRdv(event.target.value)}
               InputLabelProps={{ shrink: true }} />
@@ -244,8 +248,8 @@ export default function ConsultationAdd(props) {
             InputLabelProps={{ shrink: true }} />
             : null }
             <TextField margin="normal" fullWidth label="Prix" name="consultationName"  value={price} onChange={event => setPrice(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commentaire*" name="consultationName"  value={comment} onChange={event => setComment(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commentaire Médecin*" name="consultationName"  value={commentDr} onChange={event => setCommentDr(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Commentaire" name="consultationName"  value={comment} onChange={event => setComment(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Commentaire Médecin" name="consultationName"  value={commentDr} onChange={event => setCommentDr(event.target.value)} />
             {
             (fileList && fileList.length > 0) ?
               (fileList).map((item, index) => {
@@ -285,8 +289,10 @@ export default function ConsultationAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
-              disabled={!medecin || !consultationName || !dateRdv}
-            > {
+              disabled={!medecin || !consultationName || !dateRdv || loading}
+            > 
+            {loading && <CircularProgress size={14} />}
+            {
               !props.consultation._id ? 'Ajouter' : 'Mise à jour'
               } </Button>
           </div>
@@ -294,15 +300,7 @@ export default function ConsultationAdd(props) {
         </form>
       </div>
     </Container>
-
           </div>
-
-          {/* <div className="modal__footer">
-          <div className = {"modal__button"}
-            onClick={onCreateChannel.bind(this)}
-            disabled={name}
-          >Create</div>
-          </div> */}
         </Modal>
   );
 }

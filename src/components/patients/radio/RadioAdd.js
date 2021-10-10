@@ -8,6 +8,7 @@ import Modal from 'react-modal';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
 
+import { CircularProgress } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import axiosInstance from '../../../services/httpInterceptor' 
@@ -43,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function RadioAdd(props) {
+  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(props.radio.radio_status);
   const [price, setPrice] = useState(props.radio.price); 
   const [comment, setComment] = useState(props.radio.comment);
@@ -75,6 +77,7 @@ export default function RadioAdd(props) {
     setStatus(event.target.value);
   };
   function handleSubmit(event) {
+    setLoading(true);
     if (props.radio._id) {
       const dataToSend = {
         radio_name: radioName,
@@ -96,7 +99,7 @@ export default function RadioAdd(props) {
       .then((result) => { 
         const radioId = result._id;
         sendFiles(radioId);
-        closeModal() }
+      }
       );
     } else {
       const dataToSend = {
@@ -118,25 +121,30 @@ export default function RadioAdd(props) {
       .then((result) => { 
         const radioId = result._id;
         sendFiles(radioId);
-        closeModal() }
+      }
       );
     }
   }
 
   function sendFiles(radioId) {
-    if (fileList)
-      if (fileList && fileList.length > 0 && fileList[0]._id) {}
-      else if(fileList.length == 0) {}
+    if (fileList) {
+      if (fileList && fileList.length > 0 && fileList[0]._id) {closeModal();}
+      else if(fileList.length == 0) {closeModal();}
       else {
         const formData = new FormData(); 
         for (var x = 0; x < fileList.length; x++) {
-          formData.append(fileList[x].name, fileList[x]);
+          formData.append("file", fileList[x], fileList[x].name);
         }
         const url = `${API_URL}/radios/${radioId}/benif/${props.benif}/upload/${fileList[0].name}`
         axiosInstance.post(url, formData).then(response => response.data)
-        .then((result) => { }
+        .then((result) => { 
+          closeModal();}
         );
       }
+    } else {
+      closeModal() 
+    }
+      
   }
   function deleteFile(e, file, index) {
     setFileList(fileList.filter(item => item.name !== file.name));
@@ -208,14 +216,8 @@ export default function RadioAdd(props) {
               onChange={event => setDateRealised(event.target.value)}
               InputLabelProps={{ shrink: true }} />
               : null }
-            {/* <div className="text-area ">interpretation Labo
-              <textarea margin="normal" fullWidth label="interpretation Labo*" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
-            </div>
-            <div className="text-area ">interpretation Dr
-              <textarea margin="normal" fullWidth label="interpretation Dr*" name="firstName"  value={interpretationDr} onChange={event => setInterpretationDr(event.target.value)} />
-            </div> */}
-            <TextField margin="normal" fullWidth label="prix*" name="price"  value={price} onChange={event => setPrice(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
+            <TextField margin="normal" fullWidth label="prix" name="price"  value={price} onChange={event => setPrice(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Commentaire" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
 
             { props.radio.ordonnance ? 
               <Select
@@ -237,13 +239,13 @@ export default function RadioAdd(props) {
             <div className="result_container--body">
 
             <div className="text-area ">interpretation Dr
-              <textarea className="all-width" margin="normal" fullWidth label="interpretation Labo*" name="firstName"  value={resultInterpretation} onChange={event => setResultInterpretation(event.target.value)} />
+              <textarea className="all-width" margin="normal" fullWidth label="interpretation Labo" name="firstName"  value={resultInterpretation} onChange={event => setResultInterpretation(event.target.value)} />
             </div>
             <div className="text-area ">interpretation Labo
-              <textarea className="all-width" margin="normal" fullWidth label="interpretation Labo*" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
+              <textarea className="all-width" margin="normal" fullWidth label="interpretation Labo" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
             </div>
             <div className="all-width" className="text-area ">Conclusion
-              <textarea margin="normal" fullWidth label="interpretation Dr*" name="firstName"  value={resultConclusion} onChange={event => setResultConclusion(event.target.value)} />
+              <textarea margin="normal" fullWidth label="interpretation Dr" name="firstName"  value={resultConclusion} onChange={event => setResultConclusion(event.target.value)} />
             </div>
 
 
@@ -279,8 +281,9 @@ export default function RadioAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
-              disabled={!ordonnance || !radioName || !laboratory || !datePrevu}
-            > {
+              disabled={!ordonnance || !radioName || !laboratory || !datePrevu || loading}
+              > 
+              {loading && <CircularProgress size={14} />} {
               !props.radio._id ? 'Ajouter' : 'Mise à jour'
               } </Button>
           </div>

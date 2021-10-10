@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 
+import { CircularProgress } from '@material-ui/core';
 import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import axiosInstance from '../../../services/httpInterceptor' 
@@ -41,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function ConsultationAdd(props) {
+  const [loading, setLoading] = useState(false);
   const [consultation, setConsultation] = useState(props.ordonnance.consultation);
   const [dateRDV, setDateRDV] = useState(props.ordonnance.date_rdv);
   const [ordonnanceName, setOrdonnanceName] = useState(props.ordonnance.ordonnance_name);
@@ -63,7 +65,7 @@ export default function ConsultationAdd(props) {
   }
 
   function handleSubmit(event) {
-
+    setLoading(true);
     if (props.ordonnance._id) {
       const dataToSend = {
         ordonnance_name: ordonnanceName,
@@ -74,13 +76,12 @@ export default function ConsultationAdd(props) {
         comment: commentPatient,
         _id: props.ordonnance._id
       }
-      console.log('props.benif ', dataToSend)
       const url = `${API_URL}/ordonnances/benif/${props.benif}`
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const ordonnanceId = result._id;
         sendFiles(ordonnanceId);
-        closeModal() }
+      }
       );
     } else {
       const dataToSend = {
@@ -95,25 +96,28 @@ export default function ConsultationAdd(props) {
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const ordonnanceId = result._id;
-        sendFiles(ordonnanceId);
-        closeModal() }
+        sendFiles(ordonnanceId);}
       );
     }
   }
   function sendFiles(ordonnanceId) {
-    if (fileList)
-      if (fileList && fileList.length > 0 && fileList[0]._id) {}
-      else if(fileList.length == 0) {}
+    if (fileList) {
+      if (fileList && fileList.length > 0 && fileList[0]._id) {closeModal();}
+      else if(fileList.length == 0) {closeModal();}
       else {
         const formData = new FormData(); 
         for (var x = 0; x < fileList.length; x++) {
-          formData.append(fileList[x].name, fileList[x]);
+          formData.append("file", fileList[x], fileList[x].name);
         }
         const url = `${API_URL}/ordonnances/${ordonnanceId}/benif/${props.benif}/upload/${fileList[0].name}`
         axiosInstance.post(url, formData).then(response => response.data)
-        .then((result) => { }
+        .then((result) => {
+          closeModal(); }
         );
       }
+    } else {
+      closeModal() 
+    }
   }
   function deleteFile(e, file, index) {
     setFileList(fileList.filter(item => item.name !== file.name));
@@ -124,7 +128,6 @@ export default function ConsultationAdd(props) {
       array.push(event[i])
     }
     setFileList(array);
-    console.log('file ', array)
   }
   return (
     <Modal
@@ -177,9 +180,9 @@ export default function ConsultationAdd(props) {
             <TextField id="date" label="Date de RDV*" type="date" value={dateRDV}
               onChange={event => setDateRDV(event.target.value)}
               InputLabelProps={{ shrink: true }} />
-            <TextField margin="normal" fullWidth label="Prix*" name="firstName"  value={price} onChange={event => setPrice(event.target.value)} />
-            <TextField margin="normal" fullWidth label="commentaire patient*" name="firstName"  value={commentPatient} onChange={event => setCommentPatient(event.target.value)} />
-            <TextField margin="normal" fullWidth label="commentaire medecin*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
+            <TextField margin="normal" fullWidth label="prix" name="firstName"  value={price} onChange={event => setPrice(event.target.value)} />
+            <TextField margin="normal" fullWidth label="commentaire patient" name="firstName"  value={commentPatient} onChange={event => setCommentPatient(event.target.value)} />
+            <TextField margin="normal" fullWidth label="commentaire medecin" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
 
             {
             (fileList && fileList.length > 0) ?
@@ -209,8 +212,9 @@ export default function ConsultationAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
-              disabled={!ordonnanceName || !dateRDV || !consultation}
-            > {
+              disabled={!ordonnanceName || !dateRDV || !consultation || loading}
+              > 
+              {loading && <CircularProgress size={14} />} {
               !props.ordonnance._id ? 'Ajouter' : 'Mise à jour'
               } </Button>
           </div>

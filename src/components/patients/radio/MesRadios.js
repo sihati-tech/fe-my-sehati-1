@@ -17,6 +17,7 @@ import "./mesRadios.scss";
 import axiosInstance from '../../../services/httpInterceptor' 
 import HeaderComponent from '../header/headerComponent'
 import RadioAdd from './RadioAdd'
+import DisplayFile from '../commun/displayFile'
 const API_URL = process.env.REACT_APP_URL;
 
 const useStyles = makeStyles((theme) => ({
@@ -45,40 +46,10 @@ const StatusMapping = {
   0: 'Done',
   1: 'Later',
 }
-const mockData =  [
-  {
-    id: 13,
-    price: '45$',
-    status: 'Later',
-    date_planned: '11/02/2020',
-    date_realised: '11/02/2020',
-    doctor_name: 'Dr LAMRANI kamal',
-    laboratory: 'Labo DESCARTES',
-    ordonnance: 'ORDO-33423434',
-    interpretation_labo: 'RAS',
-    interpretation_doctor: 'labo RAS',
-    note: `Note medecin: cette radio mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    comment: 'comment ...',
-    result: 
-      {
-        attachement: [{
-          name: 'radio-222312',
-          lien: '',
-        },{
-          name: 'radio-234EAAZA',
-          lien: '',
-        }],
-        interpretation: `lorem lkj sdjhsdf lsmdk dsfhsdkfh sdmfmksfkhdkshf sdh
-         lksdflkhsd mkfhdls kh msdds sdf f dsf sd fsd f sd f sd df sdf ds fs
-         dsfs df sdf ds fs d f ds ggh g hg h gfh d gh dhg h h fgh fdg h`,
-        conclusion: `lorem lkj sdjhsdf lsmdk dsfhsdkfh sdmfmksfkhdkshf sdh
-        lksdflkhsd mkfhdls kh msdds sdf f dsf sd fsd f sd f sd df sdf ds fs
-        dsfs df sdf ds fs d f ds ggh g hg h gfh d gh dhg h h fgh fdg h`,
-      }
-  }]
-
 export default function MesRadios() {
 
+  const [isFileOpen, setIsFileOpen] = useState(false);
+  const [fileJson, setFileJson] = useState('');
   let { id } = useParams();
   const history = useHistory()
   const classes = useStyles();
@@ -173,6 +144,13 @@ export default function MesRadios() {
     );
     refreshList()
   }
+  function onChangeFile(value) { 
+    setIsFileOpen(false) 
+  }
+  function downloadFile(file) {
+    setFileJson(file)
+    setIsFileOpen(true)
+  }
   return (
     <div className="container-wrapper">
       <HeaderComponent></HeaderComponent>
@@ -184,6 +162,16 @@ export default function MesRadios() {
           benif= {id}
           radio= {radio}
           ></RadioAdd>
+      : null
+      }
+      {
+        isFileOpen ? 
+        <DisplayFile
+          onChangeFile={onChangeFile}
+          isOpen={isFileOpen}
+          fileJson= {fileJson}
+          benif= {id}
+          ></DisplayFile>
       : null
       }
       <WarningMessage 
@@ -254,7 +242,7 @@ export default function MesRadios() {
                       <div className="result__exam-name"> attachement </div>
                         {
                           radio.attachements.map((exam, index) => {
-                            return ( <div className="result__exam-name-comment"> {exam.name} </div> )
+                            return ( <div className="download-file result__exam-name-comment" onClick={(e) => downloadFile(exam)}> Télécharger le radio </div> )
                           })
                         }
                         <div className="result__exam-name"> interpretation Dr</div>

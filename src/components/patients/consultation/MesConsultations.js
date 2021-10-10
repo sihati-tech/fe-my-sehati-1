@@ -17,6 +17,7 @@ import Tab from '@material-ui/core/Tab';
 import "./mesConsultations.scss";
 import HeaderComponent from '../header/headerComponent'
 import ConsultationAdd from './ConsultationAdd'
+import DisplayFile from '../commun/displayFile'
 const API_URL = process.env.REACT_APP_URL;
 
 const useStyles = makeStyles((theme) => ({
@@ -43,6 +44,8 @@ const StatusMapping = {
 
 export default function MesConsultations() {
 
+  const [isFileOpen, setIsFileOpen] = useState(false);
+  const [fileJson, setFileJson] = useState('');
   let { id } = useParams();
   const [isOpenWarning, setIsOpenWarning] = useState(false);
   const history = useHistory()
@@ -123,6 +126,9 @@ export default function MesConsultations() {
     setIsOpen(false) 
     refreshList();
   }
+  function onChangeFile(value) { 
+    setIsFileOpen(false) 
+  }
   function onConfirm(value) { 
     setIsOpenWarning(false);
     const url = `${API_URL}/consultation/${consultation._id}`;
@@ -138,11 +144,8 @@ export default function MesConsultations() {
   }
 
   function downloadFile(file) {
-    console.log('file ', file)
-    const url = `${API_URL}/file/download`;
-    axiosInstance.post(url, file).then(response => response.data)
-    .then((result) => {  }
-    );
+    setFileJson(file)
+    setIsFileOpen(true)
   }
   return (
     <div className="container-wrapper">
@@ -155,6 +158,16 @@ export default function MesConsultations() {
           consultation= {consultation}
           benif= {id}
           ></ConsultationAdd>
+      : null
+      }
+      {
+        isFileOpen ? 
+        <DisplayFile
+          onChangeFile={onChangeFile}
+          isOpen={isFileOpen}
+          fileJson= {fileJson}
+          benif= {id}
+          ></DisplayFile>
       : null
       }
       <WarningMessage 
@@ -231,7 +244,7 @@ export default function MesConsultations() {
                       <div className="lines__title">attachement</div>
                       {
                           consultation.attachements.map((exam, index) => {
-                            return ( <div className="lines__desc"  onClick={(e) => downloadFile(exam)}> {exam.name} </div> )
+                            return ( <div className="download-file lines__desc"  onClick={(e) => downloadFile(exam)}> Télécharger la  consultation </div> )
                           })
                         }
                     </div>

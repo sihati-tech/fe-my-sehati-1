@@ -49,7 +49,7 @@ export default function WarningMessage(props) {
           </div>
 
           <div className="warning__body">
-            Vous etes sur de vouloir supprimer ce Bénificaire
+            Vous etes sur de vouloir supprimer cet élément
           </div>
 
           <div className="warning__footer"> 

@@ -121,19 +121,19 @@ export default function BenifAdd(props) {
             <TextField margin="normal" fullWidth label="Prenom*" name="firstName"  value={firstName} onChange={event => setFirstName(event.target.value)} />
             <TextField margin="normal" fullWidth label="Date de naissance*" name="firstName"  value={birthDate} onChange={event => setBirthDate(event.target.value)} />
             <TextField margin="normal" fullWidth label="Lien de parenté*" name="firstName"  value={familyLink} onChange={event => setFamilyLink(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Sexe*" name="firstName"  value={sex} onChange={event => setSex(event.target.value)} />
-            <TextField margin="normal" fullWidth label="adresse*" name="firstName"  value={adresse} onChange={event => setAdresse(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commune*" name="firstName"  value={commune} onChange={event => setCommune(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Departement*" name="firstName"  value={departement} onChange={event => setDepartement(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Region*" name="firstName"  value={region} onChange={event => setRegion(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Sexe" name="firstName"  value={sex} onChange={event => setSex(event.target.value)} />
+            <TextField margin="normal" fullWidth label="adresse" name="firstName"  value={adresse} onChange={event => setAdresse(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Commune" name="firstName"  value={commune} onChange={event => setCommune(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Departement" name="firstName"  value={departement} onChange={event => setDepartement(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Region" name="firstName"  value={region} onChange={event => setRegion(event.target.value)} />
             <TextField margin="normal" fullWidth label="Pays*" name="firstName"  value={country} onChange={event => setCountry(event.target.value)} />
             <TextField margin="normal" fullWidth label="Tel portable*" name="firstName"  value={cellPhone} onChange={event => setCellPhone(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Tel fixe*" name="firstName"  value={phoneNumber} onChange={event => setPhoneNumber(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Fax*" name="firstName"  value={fax} onChange={event => setFax(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Tel fixe" name="firstName"  value={phoneNumber} onChange={event => setPhoneNumber(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Fax" name="firstName"  value={fax} onChange={event => setFax(event.target.value)} />
             <TextField margin="normal" fullWidth label="Email*" name="firstName"  value={email} onChange={event => setEmail(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Numéro de sécu Soc*" name="firstName"  value={SSN} onChange={event => setSSN(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Numéro CIN*" name="firstName"  value={CIN} onChange={event => setCIN(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Numéro de sécu Soc" name="firstName"  value={SSN} onChange={event => setSSN(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Numéro CIN" name="firstName"  value={CIN} onChange={event => setCIN(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Commentaire" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
           </div>
           <div className={'footer-modal'}>
           <Button

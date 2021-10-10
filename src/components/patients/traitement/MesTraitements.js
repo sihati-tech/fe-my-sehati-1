@@ -23,6 +23,7 @@ import WarningMessage from '../../../shared/component/WarningMessage'
 
 import axiosInstance from '../../../services/httpInterceptor' 
 import TraitementAdd from './TraitementAdd'
+import DisplayFile from '../commun/displayFile'
 // import MesGraph from './MesGraph';
 
 const API_URL = process.env.REACT_APP_URL;
@@ -54,6 +55,8 @@ const TraitementStatusMapping = {
   2: 'Later',
 }
 export default function MesTraitements() {
+  const [isFileOpen, setIsFileOpen] = useState(false);
+  const [fileJson, setFileJson] = useState('');
   let { id } = useParams();
   const history = useHistory()
   const classes = useStyles();
@@ -133,11 +136,8 @@ export default function MesTraitements() {
     setIsOpenAdd(true)
   }
   function downloadFile(file) {
-    console.log('file ', file)
-    const url = `${API_URL}/file/download`;
-    axiosInstance.post(url, file).then(response => response.data)
-    .then((result) => {  }
-    );
+    setFileJson(file)
+    setIsFileOpen(true)
   }
   function onCloseWarning(value) { 
     setIsOpenWarning(false)
@@ -151,6 +151,9 @@ export default function MesTraitements() {
       }
     );
     refreshList()
+  }
+  function onChangeFile(value) { 
+    setIsFileOpen(false) 
   }
   return (
     <div className="container-wrapper">
@@ -172,6 +175,16 @@ export default function MesTraitements() {
       //     onChange={onChange}
       //     ></MesGraph>
       // : null
+      }
+      {
+        isFileOpen ? 
+        <DisplayFile
+          onChangeFile={onChangeFile}
+          isOpen={isFileOpen}
+          fileJson= {fileJson}
+          benif= {id}
+          ></DisplayFile>
+      : null
       }
       <WarningMessage 
               onCloseWarning={onCloseWarning}
@@ -244,7 +257,7 @@ export default function MesTraitements() {
                       <div className="result__exam-name"> attachement </div>
                         {
                           traitement.attachements.map((exam, index) => {
-                            return ( <div className="result__exam-name-comment"  onClick={(e) => downloadFile(exam)}> {exam.name} </div> )
+                            return ( <div className="download-file result__exam-name-comment"  onClick={(e) => downloadFile(exam)}> Télécharger le traitement </div> )
                           })
                         }
                       

@@ -6,9 +6,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
-import { traitementConfig, resultTraitementConfig} from './traitementConfig.js';
+import { FaTrash, FaCalendarPlus} from 'react-icons/fa';
+import { traitementConfig } from './traitementConfig.js';
 
+import { CircularProgress } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -51,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function TraitementAdd(props) {
   
+  const [loading, setLoading] = useState(false);
   const traitementResult = [];
   const [status, setStatus] = useState(props.traitement.traitement_status);
   const [traitementCategory, setTraitementCategory] = useState(props.traitement.traitement_status);
@@ -65,7 +67,7 @@ export default function TraitementAdd(props) {
   const [pathologie, setPathologie] = useState(props.traitement.pathologie);
   const [startDate, setStartDate] = useState(props.traitement.start_date);
   const [endDate, setEndDate] = useState(props.traitement.end_date);
-  const [duration, setDuration] = useState(props.traitement.duration);
+  const [duration, setDuration] = useState(props.traitement.traitement_duration);
   const [restDuration, setRestDuration] = useState(props.traitement.rest_duration);
   const [subTraitements, setSubTraitements] = useState(props.traitement.subTraitments);
 
@@ -83,6 +85,7 @@ export default function TraitementAdd(props) {
   }
 
   function handleSubmit(event) {
+    setLoading(true);
     if (props.traitement._id) {
       const dataToSend = {
         traitement_name: traitementName,
@@ -101,7 +104,7 @@ export default function TraitementAdd(props) {
       .then((result) => { 
         const traitementId = result._id;
         sendFiles(traitementId);
-        closeModal() }
+      }
       );
     } else {
       const dataToSend = {
@@ -123,25 +126,27 @@ export default function TraitementAdd(props) {
       .then((result) => { 
         const traitementId = result._id;
         sendFiles(traitementId);
-        closeModal() 
       });
     }
   }
 
   function sendFiles(traitementId) {
     if (fileList) {
-      if (fileList && fileList.length > 0 && fileList[0]._id) {}
-      else if(fileList.length == 0) {}
+      if (fileList && fileList.length > 0 && fileList[0]._id) {closeModal();}
+      else if(fileList.length == 0) {closeModal();}
       else {
         const formData = new FormData(); 
         for (var x = 0; x < fileList.length; x++) {
-          formData.append(fileList[x].name, fileList[x]);
+          formData.append("file", fileList[x], fileList[x].name);
         }
         const url = `${API_URL}/traitements/${traitementId}/benif/${props.benif}/upload/${fileList[0].name}`
         axiosInstance.post(url, formData).then(response => response.data)
-        .then((result) => { }
+        .then((result) => { 
+          closeModal();}
         );
       }
+    } else {
+      closeModal();
     }
     
   }
@@ -161,7 +166,7 @@ export default function TraitementAdd(props) {
   };
   
   function addSubTraitement() {
-    const newElement = traitementConfig
+    const newElement = Object.assign({}, traitementConfig);
     setSubTraitements(oldArray => {
       if (oldArray && oldArray.length>0)
         return [...oldArray, newElement]
@@ -170,27 +175,27 @@ export default function TraitementAdd(props) {
     });
   }
   function addResultLine(subTraitement, indexSubTraitement) {
-    let res = [...subTraitements]; // copying the old datas array
+    let res = [...subTraitements]; 
     res[indexSubTraitement].result.push({
       "date_prise": "",
       "moment": "",
       "value": "",
-    }); // replace e.target.value with whatever you want to change it to
+    }); 
     setSubTraitements(res)
   }
   function handleChangeTraitementCategory(event) {
     setTraitementCategory(event.target.value)
   };
   function setResultRow(value, indexRow, indexSubTraitement, field) {
-    let res = [...subTraitements]; // copying the old datas array
-    let results = [...res[indexSubTraitement].result]; // copying the old datas array
-    results[indexRow][field] = value; // replace e.target.value with whatever you want to change it to
+    let res = [...subTraitements]; 
+    let results = [...res[indexSubTraitement].result]; 
+    results[indexRow][field] = value; 
     res[indexSubTraitement].result = results
     setSubTraitements(res)
   }
   function handleSubTraitement(subTraitement, value, indexSubTraitement, key) {
-    let res = [...subTraitements]; // copying the old datas array
-    res[indexSubTraitement][key] = value; // replace e.target.value with whatever you want to change it to
+    let res = [...subTraitements]; 
+    res[indexSubTraitement][key] = value; 
     setSubTraitements(res)
   }
   function renderSubTraitements() {
@@ -211,10 +216,10 @@ export default function TraitementAdd(props) {
                   <TextField id="date" label="Date fin*" type="date" value={subTraitement.sub_traitement_end_date}
                   onChange={event => handleSubTraitement(subTraitement, event.target.value, indexSubTraitement, 'sub_traitement_end_date')} 
                   InputLabelProps={{ shrink: true }} />
-                  <TextField margin="normal" fullWidth label="durée passé*" name="lastName" value={subTraitement.sub_traitement_duration_passed} onChange={event => handleSubTraitement(subTraitement, event.target.value, indexSubTraitement, 'sub_traitement_duration_passed')} /> 
-                  <TextField margin="normal" fullWidth label="durée reste*" name="lastName" value={subTraitement.sub_traitement_duration_reste} onChange={event => handleSubTraitement(subTraitement, event.target.value, indexSubTraitement, 'sub_traitement_duration_reste')} /> 
-                  <TextField margin="normal" fullWidth label=" posologie*" name="lastName" value={subTraitement.sub_traitement_posologie} onChange={event => handleSubTraitement(subTraitement, event.target.value, indexSubTraitement, 'sub_traitement_posologie')} /> 
-                  <TextField margin="normal" fullWidth label="fois par jour*" name="lastName" value={subTraitement.sub_traitement_time_per_day} onChange={event => handleSubTraitement(subTraitement, event.target.value, indexSubTraitement, 'sub_traitement_time_per_day')} /> 
+                  <TextField margin="normal" fullWidth label="durée passé" name="lastName" value={subTraitement.sub_traitement_duration_passed} onChange={event => handleSubTraitement(subTraitement, event.target.value, indexSubTraitement, 'sub_traitement_duration_passed')} /> 
+                  <TextField margin="normal" fullWidth label="durée reste" name="lastName" value={subTraitement.sub_traitement_duration_reste} onChange={event => handleSubTraitement(subTraitement, event.target.value, indexSubTraitement, 'sub_traitement_duration_reste')} /> 
+                  <TextField margin="normal" fullWidth label="posologie" name="lastName" value={subTraitement.sub_traitement_posologie} onChange={event => handleSubTraitement(subTraitement, event.target.value, indexSubTraitement, 'sub_traitement_posologie')} /> 
+                  <TextField margin="normal" fullWidth label="fois par jour" name="lastName" value={subTraitement.sub_traitement_time_per_day} onChange={event => handleSubTraitement(subTraitement, event.target.value, indexSubTraitement, 'sub_traitement_time_per_day')} /> 
 
                   type : <Select
                     labelId="demo-simple-select-label"
@@ -325,19 +330,19 @@ export default function TraitementAdd(props) {
             }
 
             <TextField margin="normal" fullWidth label="Nom traitement*" name="lastName" value={traitementName} onChange={event => setTraitementName(event.target.value)} />
-            <TextField margin="normal" fullWidth label="pathologie*" name="lastName" value={pathologie} onChange={event => setPathologie(event.target.value)} /> 
+            <TextField margin="normal" fullWidth label="pathologie" name="lastName" value={pathologie} onChange={event => setPathologie(event.target.value)} /> 
             <TextField id="date" label="Date début*" type="date" value={startDate}
               onChange={event => setStartDate(event.target.value)}
               InputLabelProps={{ shrink: true }} />
             <TextField id="date" label="Date fin*" type="date" value={endDate}
             onChange={event => setEndDate(event.target.value)}
             InputLabelProps={{ shrink: true }} />
-            <TextField margin="normal" fullWidth label="durée*" name="lastName" value={duration} onChange={event => setDuration(event.target.value)} /> 
-            <TextField margin="normal" fullWidth label="durée restante*" name="lastName" value={restDuration} onChange={event => setRestDuration(event.target.value)} /> 
+            <TextField margin="normal" fullWidth label="durée" name="lastName" value={duration} onChange={event => setDuration(event.target.value)} /> 
+            <TextField margin="normal" fullWidth label="durée restante" name="lastName" value={restDuration} onChange={event => setRestDuration(event.target.value)} /> 
 
-            <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
-            <TextField margin="normal" fullWidth label=" Comment Personnel Traitment*" name="firstName"  value={commentPersonnelTraitment} onChange={event => setCommentPersonnelTraitment(event.target.value)} />
-            <TextField margin="normal" fullWidth label="interpretation Dr*" name="firstName"  value={interpretationDr} onChange={event => setInterpretationDr(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Commentaire" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
+            <TextField margin="normal" fullWidth label=" Comment Personnel Traitment" name="firstName"  value={commentPersonnelTraitment} onChange={event => setCommentPersonnelTraitment(event.target.value)} />
+            <TextField margin="normal" fullWidth label="interpretation Dr" name="firstName"  value={interpretationDr} onChange={event => setInterpretationDr(event.target.value)} />
             {
             (fileList && fileList.length > 0) ?
               (fileList).map((item, index) => {
@@ -385,8 +390,9 @@ export default function TraitementAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
-              disabled={!traitementName || !ordonnance || !startDate || !endDate}
-            > {
+              disabled={!traitementName || !ordonnance || !startDate || !endDate || loading}
+              > 
+              {loading && <CircularProgress size={14} />} {
               !props.traitement._id ? 'Ajouter' : 'Mise à jour'
               } </Button>
 

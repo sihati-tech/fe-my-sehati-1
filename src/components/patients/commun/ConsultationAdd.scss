@@ -1,0 +1,67 @@
+
+.file{
+  &__header{
+      &-title{
+        padding: 15px 28px;
+        font-weight: 600;
+        font-size: 15px;
+        box-shadow: 1px 1px 4px black;
+      }
+      &-close{
+
+      }
+  }
+  &__body{
+      height: calc(100% - 130px);
+      display: flex;
+      align-items: center;
+      @media (max-width: 767px) {
+        height: calc(100% - 60px);
+    }
+      &-description{
+          color: #9d9d9d;
+          padding: 0 28px 20px 28px;
+          @media (max-width: 767px) {
+              font-size: 10px;
+          }
+      }
+      &--input{
+        padding: 0px 15px;
+          display: grid;
+          &-label{
+            font-size: 12px;
+            margin-bottom: 0px;
+          }
+          &-input{
+            height: 30px;
+            width: 100%;
+            padding-left: 10px;
+            position: relative;
+            font-size: 12px;
+          }
+          &-inputDesc{
+            height: 30px;
+              width: 100%;
+              padding-left: 10px;
+              position: relative;
+              font-size: 20px;
+          }
+          &-container{
+              height: 35px;
+              position: relative;
+          }
+      }
+      &-comment{
+
+      }
+
+  }
+}
+.image-content {
+  width: 100%;
+  height: auto;
+}
+.pdf-content {
+  width: 100%;
+  height: 100%;
+}

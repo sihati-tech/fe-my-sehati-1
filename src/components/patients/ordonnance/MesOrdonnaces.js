@@ -18,6 +18,7 @@ import OrdonnaceAdd from './OrdonnaceAdd'
 import "./mesOrdonnaces.scss";
 import HeaderComponent from '../header/headerComponent'
 import WarningMessage from '../../../shared/component/WarningMessage'
+import DisplayFile from '../commun/displayFile'
 const API_URL = process.env.REACT_APP_URL;
 
 const StatusMapping = {
@@ -25,115 +26,6 @@ const StatusMapping = {
   1: 'InProgress',
   2: 'Later',
 }
-const mockData =  [
-  {
-    id: 11,
-    type: 'Generalist',
-    ordonnance: 'Cons 22339-49403-439430',
-    price: '22$',
-    status: 'InProgress',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-    attachement: ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'],
-  },
-  {
-    id: 12,
-    type: 'Generalist',
-    ordonnance: 'Cons 22339-49403-439430',
-    price: '45$',
-    status: 'InProgress',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-    attachement: ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'],
-  },
-  {
-    id: 13,
-    type: 'Generalist',
-    ordonnance: 'Cons 22339-49403-439430',
-    price: '45$',
-    status: 'Later',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-    attachement: ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'],
-  },
-  {
-    id: 14,
-    type: 'Generalist',
-    ordonnance: 'Cons 22339-49403-439430',
-    price: '45$',
-    status: 'Done',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-    attachement: ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'],
-  },
-  {
-    id: 15,
-    type: 'Specialist',
-    ordonnance: 'Cons 22339-49403-439430',
-    price: '45$',
-    status: 'InProgress',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-    attachement: ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'],
-  },
-  {
-    id: 16,
-    type: 'Specialist',
-    ordonnance: 'Cons 22339-49403-439430',
-    price: '45$',
-    status: 'Later',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-    attachement: ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'],
-  },
-  {
-    id: 17,
-    type: 'Specialist',
-    ordonnance: 'Cons 22339-49403-439430',
-    price: '45$',
-    status: 'Done',
-    date: '11/02/2020',
-    doctor_name: 'LAMRANI kamal',
-    note: `Note medecin: cette ordonnance mensuelle a pour objectif de suivre la tension et la temperature, pour annuler le RDV merci d'appeler le numero 09 993 33 9434`,
-    consultation_name: 'CONS 34424',
-    consultation_comment: 'comment ...',
-    consultation_date: '11/02/2020',
-    consultation_RDV: '11/02/2020',
-    attachement: ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'],
-  }
-]
-const attachement = ['ordonnance-dec-ELYAMANI.pdf', 'photo_.jpeg', 'ordonnance-Medicament.pdf'];
-
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
@@ -150,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MesOrdonnaces() {
+  const [isFileOpen, setIsFileOpen] = useState(false);
+  const [fileJson, setFileJson] = useState('');
   let { id } = useParams();
   const history = useHistory()
   const classes = useStyles();
@@ -238,10 +132,11 @@ export default function MesOrdonnaces() {
     setIsOpen(true)
   }
   function downloadFile(file) {
-    const url = `${API_URL}/file/download`;
-    axiosInstance.post(url, file).then(response => response.data)
-    .then((result) => {  }
-    );
+    setFileJson(file)
+    setIsFileOpen(true)
+  }
+  function onChangeFile(value) { 
+    setIsFileOpen(false) 
   }
   return (
     <div className="container-wrapper">
@@ -255,6 +150,16 @@ export default function MesOrdonnaces() {
           ordonnance= {ordonnance}
           benif= {id}
           ></OrdonnaceAdd>
+      : null
+      }
+      {
+        isFileOpen ? 
+        <DisplayFile
+          onChangeFile={onChangeFile}
+          isOpen={isFileOpen}
+          fileJson= {fileJson}
+          benif= {id}
+          ></DisplayFile>
       : null
       }
       <WarningMessage 
@@ -317,7 +222,7 @@ export default function MesOrdonnaces() {
                     <div  className="lines__line"> <div className="lines__title">document</div> 
                     <div>
                       {ordonnance.attachements.map(item => {
-                        return (<div onClick={(e) => downloadFile(item)}> {item.name} </div>);
+                        return (<div className="download-file" onClick={(e) => downloadFile(item)}> Télécharger l'ordonnance </div>);
                       })}
                     </div>
                     </div>

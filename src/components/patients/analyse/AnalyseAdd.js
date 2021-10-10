@@ -9,6 +9,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
 import { analyseConfig} from './analyseConfig.js';
 
+import { CircularProgress } from '@material-ui/core';
 
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -46,6 +47,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function AnalyseAdd(props) {
   
+  const [loading, setLoading] = useState(false);
   const analyseResult = [];
   const [status, setStatus] = useState(props.analyse.analyse_status);
   const [analyseCategory, setAnalyseCategory] = useState(props.analyse.analyse_status);
@@ -76,6 +78,7 @@ export default function AnalyseAdd(props) {
   }
 
   function handleSubmit(event) {
+    setLoading(true);
     if (props.analyse._id) {
       const dataToSend = {
         analyse_name: analyseName,
@@ -95,8 +98,7 @@ export default function AnalyseAdd(props) {
       .then((result) => { 
         const analyseId = result._id;
         sendFiles(analyseId);
-        closeModal() }
-      );
+      });
     } else {
       const dataToSend = {
         ordonnance: ordonnance,
@@ -116,25 +118,28 @@ export default function AnalyseAdd(props) {
       .then((result) => { 
         const analyseId = result._id;
         sendFiles(analyseId);
-        closeModal() }
+      }
       );
     }
   }
 
   function sendFiles(analyseId) {
     if (fileList) {
-      if (fileList && fileList.length > 0 && fileList[0]._id) {}
-      else if(fileList.length == 0) {}
+      if (fileList && fileList.length > 0 && fileList[0]._id) {closeModal();}
+      else if(fileList.length == 0) {closeModal();}
       else {
         const formData = new FormData(); 
         for (var x = 0; x < fileList.length; x++) {
-          formData.append(fileList[x].name, fileList[x]);
+          formData.append("file", fileList[x], fileList[x].name);
         }
         const url = `${API_URL}/analyses/${analyseId}/benif/${props.benif}/upload/${fileList[0].name}`
         axiosInstance.post(url, formData).then(response => response.data)
-        .then((result) => { }
-        );
+        .then((result) => { 
+          closeModal();
+        });
       }
+    } else {
+      closeModal();
     }
     
   }
@@ -263,13 +268,13 @@ export default function AnalyseAdd(props) {
               : null }
             {
             status === 'Done' ?
-            <TextField id="date" label="Date de RDV*" type="date" value={dateRealised}
+            <TextField id="date" label="Date realisée*" type="date" value={dateRealised}
               onChange={event => setDateRealised(event.target.value)}
               InputLabelProps={{ shrink: true }} />
               : null }
             
-            <TextField margin="normal" fullWidth label="prix*" name="price"  value={price} onChange={event => setPrice(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Commentaire*" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
+            <TextField margin="normal" fullWidth label="prix" name="price"  value={price} onChange={event => setPrice(event.target.value)} />
+            <TextField margin="normal" fullWidth label="Commentaire" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
             
             { props.analyse.ordonnance ? 
               <Select
@@ -348,8 +353,9 @@ export default function AnalyseAdd(props) {
               color="primary"
               className={classes.submit}
               onClick={ handleSubmit }
-              disabled={!ordonnance || !analyseName || !laboratory || !datePrevu}
-            > {
+              disabled={!ordonnance || !analyseName || !laboratory || !datePrevu || loading}
+              > 
+              {loading && <CircularProgress size={14} />} {
               !props.analyse._id ? 'Ajouter' : 'Mise à jour'
               } </Button>
 

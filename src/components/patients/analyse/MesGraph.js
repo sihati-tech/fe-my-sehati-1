@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 
-import { Chart } from 'react-charts'
+// import { Chart } from 'react-charts'
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 import "./mesAnalyses.scss";
 const customStyles = {
@@ -34,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-let sourceCode
 export default function MesGraph(props) {
 
   useEffect( () => {
@@ -77,8 +75,9 @@ export default function MesGraph(props) {
           </div>
 
           <div className="graph__body"> 
-            <Chart data={data} axes={axes} 
-             />
+          {/* <Chart data={data} axes={axes} /> */}
+
+          
           </div>
           <div className="graph__footer"> 
            Evolution de {props.codeGraph.label}

@@ -159,7 +159,9 @@ export default function AnalyseAdd(props) {
   };
   
   function addAnalyseResult() {
-    const newElement = analyseConfig[analyseCategory]
+    console.log('analyseConfig[analyseCategory] ', analyseConfig[analyseCategory])
+    const newElement = JSON.parse(JSON.stringify(analyseConfig[analyseCategory]))
+    console.log('newElement ', newElement)
     setResults(oldArray => {
       if (oldArray && oldArray.length>0)
         return [...oldArray, newElement]
@@ -175,39 +177,53 @@ export default function AnalyseAdd(props) {
     res[indexCateg].subCategories[indexSubCateg].results[indexExam].value = value;
     setResults(res)
   }
-  function renderAnalyseResult() {
+  function removeSubCateg(index) {
+    const resultTemp = results;
+    resultTemp.splice(index, 1);
+    setResults([])
+    setTimeout(() => {
+      setResults(resultTemp)
+    }, 100);
+  }
+  function renderAnalyseResult(results) {
     return(
       <div>
-        
         {
          ( results && results.length > 0)? 
           <div>
             {
             results.map((category, indexCateg) => (
-              <div> 
-                <div> {category.category}</div>
+              renderSubCategory(category, indexCateg)
+            ))} 
+          </div>  : null
+        }
+      </div>
+    )
+  }
+  function renderSubCategory(category, indexCateg) {
+    return (
+          <div key={indexCateg}> 
+                <div className="modal__category-title"> {category.category}
+                <FaTrash  className="modal__category-icon" onClick={() => removeSubCateg(indexCateg)}></FaTrash>
+                </div>
                 {
                   category.subCategories.map((subgategory, indexSubCateg) => (
-                    <div> 
+                    <div key= {indexSubCateg}> 
                       <div> {subgategory.subCategoryName}</div>
                       {
                         subgategory.results.map((exam, indexExam) => (
-                          <div className="modal__subGategory-line"> 
-                            <div> {exam.label}</div>
+                          <div className="modal__subGategory-line" key={indexExam}> 
+                            <div className="margin-text"> {exam.label}</div>
                             <TextField  label={exam.code} type="text" value={exam.value}
                               onChange={event => handleValueExam(event.target.value, indexCateg, indexSubCateg, indexExam)}
                               InputLabelProps={{ shrink: true }} />
-                            <div> {exam.unit}</div>
+                            <div className="margin-text"> ({exam.unit})</div>
                             
                           </div>
                         ))} 
                     </div>
                   ))} 
               </div>
-            ))} 
-          </div>  : null
-        }
-      </div>
     )
   }
   return (
@@ -298,7 +314,7 @@ export default function AnalyseAdd(props) {
            
             <TextField margin="normal" fullWidth label="interpretation Labo" name="firstName"  value={interpretationLabo} onChange={event => setInterpretationLabo(event.target.value)} />
             <TextField margin="normal" fullWidth label="interpretation Doc" name="firstName"  value={interpretationDr} onChange={event => setInterpretationDr(event.target.value)} />
-            {renderAnalyseResult()}
+            {renderAnalyseResult(results)}
             Selection category: <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -316,7 +332,7 @@ export default function AnalyseAdd(props) {
             {
             (fileList && fileList.length > 0) ?
               (fileList).map((item, index) => {
-                return (<div> {item.name} <FaTrash onClick={(e) => deleteFile(e, item, index)}></FaTrash></div>);
+                return (<div key={index}> {item.name} <FaTrash onClick={(e) => deleteFile(e, item, index)}></FaTrash></div>);
               })
               : null
             }

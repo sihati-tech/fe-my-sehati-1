@@ -25,16 +25,16 @@ export const analyseConfig = [ {
     subCategoryName: 'FORMULE LEUCOCYTAIRE',
     results: [
       {
-        code: 'DSFDSF',
-        label: 'Hématies',
+        code: 'Monocytes',
+        label: 'Monocytes',
         unit: 'Tera/L',
         reference_min: '4.28',
         reference_max: '5.79',
         historique:''
       },
       {
-        code: 'ZERE',
-        label: 'V.G.M.',
+        code: 'Lymphocytes',
+        label: 'Lymphocytes',
         unit: 'fl',
         reference_min: '78.0',
         reference_max: '97.0',
@@ -50,16 +50,16 @@ export const analyseConfig = [ {
     subCategoryName: 'TAUX DE PROTHROMBINE',
     results: [
       {
-        code: 'HMTC',
-        label: 'Hématies',
-        unit: 'Tera/L',
+        code: 'INR',
+        label: 'INR',
+        unit: '%',
         reference_min: '4.28',
         reference_max: '5.79',
         historique:''
       },
       {
-        code: 'VGM',
-        label: 'V.G.M.',
+        code: 'TP',
+        label: 'T.P',
         unit: 'fl',
         reference_min: '78.0',
         reference_max: '97.0',
@@ -68,19 +68,19 @@ export const analyseConfig = [ {
     ]
   },
   {
-    subCategoryName: 'FORMULE LEUCOCYTAIRE',
+    subCategoryName: 'TEMPS DE CEPHALINE ACTIVEE - APTT SP',
     results: [
       {
-        code: 'DSFDSF',
-        label: 'Hématies',
+        code: 'Ratio M/T',
+        label: 'RatioMT',
         unit: 'Tera/L',
         reference_min: '4.28',
         reference_max: '5.79',
         historique:''
       },
       {
-        code: 'ZERE',
-        label: 'V.G.M.',
+        code: 'TCA',
+        label: 'TCA',
         unit: 'fl',
         reference_min: '78.0',
         reference_max: '97.0',

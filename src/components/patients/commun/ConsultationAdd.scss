@@ -5,14 +5,12 @@
         padding: 15px 28px;
         font-weight: 600;
         font-size: 15px;
-        box-shadow: 1px 1px 4px black;
       }
       &-close{
 
       }
   }
   &__body{
-      height: calc(100% - 130px);
       display: flex;
       align-items: center;
       @media (max-width: 767px) {
@@ -64,4 +62,7 @@
 .pdf-content {
   width: 100%;
   height: 100%;
+}
+.react-pdf__Page__canvas {    
+  width: 100% !important;
 }

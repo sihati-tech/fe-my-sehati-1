@@ -82,6 +82,19 @@
     padding: 10px;
     border: 1px solid;
   }
+  &__category-title {
+    background-color: white;
+    border-top: 1px solid black;
+    margin: 5px;
+    padding: 7px;
+    font-size: 20px;
+    text-align-last: center;
+  }
+  &__category-icon {
+    float: right;
+    font-size: 14px;
+    cursor: pointer;
+  }
 }
 .ReactModal__Overlay--after-open {
   background-color: rgba(37, 40, 42, 0.7) !important;
@@ -120,4 +133,7 @@
     font-weight: bold;
     text-align: center;
   }
+}
+.margin-text {
+  margin: 10px;
 }

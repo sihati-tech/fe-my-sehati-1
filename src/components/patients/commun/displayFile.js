@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 import axiosInstance from '../../../services/httpInterceptor' 
-import { FaTrash } from 'react-icons/fa';
-
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import "./ConsultationAdd.scss";
+import { Document, Page, pdfjs   } from "react-pdf";
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+
 const customStyles = {
   content : {
     top                   : '50%',
@@ -49,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 export default function DisplayFile(props) {
   const [fileJson, setFileJson] = useState(props.fileJson);
   const [file64, setFile64] = useState(null);
+  const [numPages, setNumPages] = useState(null);
 
   useEffect( () => {
     getFile(fileJson)
@@ -61,6 +56,10 @@ export default function DisplayFile(props) {
     axiosInstance.post(url, file).then(response => response.data)
     .then((result) => {setFile64(result)}
     );
+  }
+
+  function onDocumentLoadSuccess(document) {
+    setNumPages(document.numPages);
   }
 
   return (
@@ -79,12 +78,23 @@ export default function DisplayFile(props) {
           </div>
 
           <div className="file__body"> 
-          { 
+          {
             fileJson.mimeType === "application/pdf" ?
-            <iframe src={`data:${fileJson.mimeType};base64,${file64}`} className="pdf-content"/>
+            <div>
+            <Document className="pdf-content"
+              file={`data:${fileJson.mimeType};base64,${file64}`}
+              onLoadSuccess={onDocumentLoadSuccess}
+                >
+                  {Array.apply(null, Array(numPages))
+                  .map((x, i)=>i+1)
+                  .map(page => <Page pageNumber={page}/>)}
+            </Document>
+            </div>
+
             :
             <img src={`data:${fileJson.mimeType};base64,${file64}`} className="image-content"/>
           }
+
           </div>
         </Modal>
   );

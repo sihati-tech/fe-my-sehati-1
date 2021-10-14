@@ -24,7 +24,7 @@ import WarningMessage from '../../../shared/component/WarningMessage'
 import DisplayFile from '../commun/displayFile'
 import axiosInstance from '../../../services/httpInterceptor' 
 import AnalyseAdd from './AnalyseAdd'
-// import MesGraph from './MesGraph';
+import MesGraph from './MesGraph';
 
 const API_URL = process.env.REACT_APP_URL;
 const useStyles = makeStyles((theme) => ({
@@ -156,6 +156,8 @@ const mockData =  [
 
 export default function MesAnalyses() {
   const [isFileOpen, setIsFileOpen] = useState(false);
+  const [isGraphOpen, setIsGraphOpen] = useState(false);
+  const [codeGraph, setCodeGraph] = useState(false);
   const [fileJson, setFileJson] = useState('');
   let { id } = useParams();
   const history = useHistory()
@@ -171,6 +173,8 @@ export default function MesAnalyses() {
   const [isOpenAdd, setIsOpenAdd] = useState(false);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [graphData, setGraphData] = useState([]);
+  const [benif, setBenif] = useState({});
 
   useEffect( () => {
     const url = `${API_URL}/benificiares/${id}` ;
@@ -179,6 +183,7 @@ export default function MesAnalyses() {
       const benif = result[0];
       setFirstName(benif.first_name)
       setLastName(benif.last_name)
+      setBenif(benif);
     }
     );
     refreshList();
@@ -201,11 +206,27 @@ export default function MesAnalyses() {
     history.push(url);
   }
 
-  function openGraph(e, benif) {
-    setIsOpen(true)
+  function openGraph(e, row) {
+    const graphData = [];
+    setCodeGraph(row)
+    consultationList.map(consultation => {
+      if (consultation.results)
+        consultation.results.map(categ => {
+          categ.subCategories.map(subCateg => {
+            subCateg.results.map(resSubCateg => {
+              if (resSubCateg.code === row.code)
+                graphData.push({date: consultation.date_rdv || consultation.date_prevu, value: resSubCateg.value})
+            })
+          })
+        })
+    })
+    graphData.sort(function(a,b){
+      return new Date(b.date) - new Date(a.date);
+    });
+    setGraphData(graphData)
+    setIsGraphOpen(true)
   }
   function onChange(value) { 
-    console.log('value')
     setIsOpen(false) 
   }
   function refreshList () {
@@ -242,6 +263,9 @@ export default function MesAnalyses() {
   function onChangeFile(value) { 
     setIsFileOpen(false) 
   }
+  function onChangeGraph(value) { 
+    setIsGraphOpen(false) 
+  }
   function onCloseWarning(value) { 
     setIsOpenWarning(false)
   }
@@ -276,6 +300,17 @@ export default function MesAnalyses() {
           fileJson= {fileJson}
           benif= {id}
           ></DisplayFile>
+      : null
+      }
+      {
+        isGraphOpen ? 
+        <MesGraph
+          onChangeGraph={onChangeGraph}
+          isOpen={isGraphOpen}
+          graphData= {graphData}
+          benif= {benif}
+          codeGraph= {codeGraph}
+          ></MesGraph>
       : null
       }
       <WarningMessage 
@@ -388,7 +423,6 @@ export default function MesAnalyses() {
                                   <TableCell align="right">valeur</TableCell> 
                                   <TableCell align="right">unité</TableCell> 
                                   <TableCell align="right">reference</TableCell> 
-                                  <TableCell align="right">antériorité</TableCell> 
                                   <TableCell align="right"></TableCell> 
                               </TableRow> 
                               </TableHead> 
@@ -396,8 +430,8 @@ export default function MesAnalyses() {
                               <TableCell align="right">{row.value}</TableCell> 
                               <TableCell align="right">{row.unit}</TableCell> 
                               <TableCell align="right">{row.reference_max} - {row.reference_min} </TableCell> 
-                              <TableCell align="right">{row.historique}</TableCell> <TableCell> 
-                                <FaPoll className="graph-button" onClick={(e) => openGraph(e, row.code)} >
+                              <TableCell> 
+                                <FaPoll className="graph-button" onClick={(e) => openGraph(e, row)} >
                                   </FaPoll></TableCell> </TableRow> ))} </TableBody> </Table>
                     {/* { exam.results.map((result, index) => { return ( <div className="result__result-line"> <div>{result.label}</div> <div>{result.value} {result.unit}</div> <div>{result.reference_min}</div> <div>{result.reference_max}</div> </div> ) }) } */} 
                     </div> ) })} 

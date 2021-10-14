@@ -282,12 +282,6 @@ export default function AnalyseAdd(props) {
               onChange={event => setDatePrevu(event.target.value)}
               InputLabelProps={{ shrink: true }} /> 
               : null }
-            {
-            status === 'Done' ?
-            <TextField id="date" label="Date realisée*" type="date" value={dateRealised}
-              onChange={event => setDateRealised(event.target.value)}
-              InputLabelProps={{ shrink: true }} />
-              : null }
             
             <TextField margin="normal" fullWidth label="prix" name="price"  value={price} onChange={event => setPrice(event.target.value)} />
             <TextField margin="normal" fullWidth label="Commentaire" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
@@ -305,6 +299,15 @@ export default function AnalyseAdd(props) {
               </Select>              
               : null
             }
+            {
+            status === 'Done' ?
+            <div className="margin-date">
+              <TextField id="date" label="Date realisée*" type="date" value={dateRealised}
+              onChange={event => setDateRealised(event.target.value)}
+              InputLabelProps={{ shrink: true }} />
+            </div>
+            
+              : null }
             {
             status === 'Done' ?
               

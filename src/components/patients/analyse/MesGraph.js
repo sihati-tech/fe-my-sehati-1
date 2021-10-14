@@ -21,7 +21,6 @@ const customStyles = {
   }
 };
 
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     display: 'flex',
@@ -42,17 +41,16 @@ export default function MesGraph(props) {
   }, []);
 
   function closeModal() {
-    props.onChange(true);
+    props.onChangeGraph(true);
   }
+  
   const data = React.useMemo(
     () => [
       {
-        label: 'Series 1',
-        data: [[0, 1], [1, 2], [2, 4], [3, 2], [4, 7]]
-      },
-      {
-        label: 'Series 2',
-        data: [[0, 3], [1, 1], [2, 5], [3, 6], [4, 4]]
+        label: 'graph',
+        data: props.graphData.map(element => {
+          return [new Date(element.date), element.value]
+        }),
       }
     ],
     []
@@ -60,24 +58,30 @@ export default function MesGraph(props) {
  
   const axes = React.useMemo(
     () => [
-      { primary: true, type: 'linear', position: 'bottom' },
+      { primary: true, type: 'time', position: 'bottom'},
       { type: 'linear', position: 'left' }
     ],
     []
   )
+  
   return (
     <Modal
-        isOpen={props.isOpen}
+        isOpen={true}
           onRequestClose={closeModal.bind(this)}
           style={customStyles}
           contentLabel="Example Modal"
         >
           <div className="graph__header">
-            Graph : Exam ()
+            {props.benif.first_name +' '+ props.benif.last_name}
+            
           </div>
 
           <div className="graph__body"> 
-            <Chart data={data} axes={axes} />
+            <Chart data={data} axes={axes} 
+             />
+          </div>
+          <div className="graph__footer"> 
+           Evolution de {props.codeGraph.label}
           </div>
         </Modal>
   );

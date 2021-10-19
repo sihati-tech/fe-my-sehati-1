@@ -1,7 +1,7 @@
 export const traitementConfig = {
   "sub_traitement_name": "",
-  "sub_traitement_start_date": "",
-  "sub_traitement_end_date": "",
+  "sub_traitement_start_date": (new Date()).toISOString().substr(0,10),
+  "sub_traitement_end_date": (new Date()).toISOString().substr(0,10),
   "sub_traitement_duration_passed": "",
   "sub_traitement_duration_reste": "",
   "sub_traitement_posologie": "",

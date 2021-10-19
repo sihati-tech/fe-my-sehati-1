@@ -9,6 +9,7 @@ import {
   BrowserRouter as Router,
   useParams
 } from "react-router-dom";
+import { FaCheckCircle, FaRegHourglass} from 'react-icons/fa';
 import axiosInstance from '../../../services/httpInterceptor' 
 import { useHistory } from "react-router-dom";
 import Tabs from '@material-ui/core/Tabs';
@@ -22,9 +23,9 @@ import DisplayFile from '../commun/displayFile'
 const API_URL = process.env.REACT_APP_URL;
 
 const StatusMapping = {
-  0: 'Done',
-  1: 'InProgress',
-  2: 'Later',
+  Later: 'A venir',
+  InProgress: 'En cours',
+  Done: 'Terminé',
 }
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -207,10 +208,13 @@ export default function MesOrdonnaces() {
                 </AccordionSummary>
                 <AccordionDetails>
                 <div className='all_width'>
-        
-                <Typography className="padding2">
-                {ordonnance.note}
-                  </Typography> 
+                { ordonnance.ordonnance_status === 'Done' &&
+                <Typography className="padding2 right-status status-done">
+                  {StatusMapping[ordonnance.ordonnance_status]}<FaCheckCircle></FaCheckCircle>
+                </Typography> }
+                {ordonnance.ordonnance_status === 'InProgress' && <Typography className="padding2 right-status status-progress">
+                  {StatusMapping[ordonnance.ordonnance_status]}<FaRegHourglass></FaRegHourglass>
+                </Typography> }
                   <div  className="lines">
                     <div  className="lines__line"> <div className="lines__title">nom</div><div className="lines__desc">{ordonnance.ordonnance_name}</div></div>
                     <div  className="lines__line"> <div className="lines__title">Docteur</div><div className="lines__desc-clickable">{ordonnance.consultation.medecin.last_name + ' ' + ordonnance.consultation.medecin.first_name}</div></div>

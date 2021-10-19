@@ -8,6 +8,7 @@ import Modal from 'react-modal';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
 
+import { toast } from 'react-toastify';
 import { CircularProgress } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -49,8 +50,8 @@ export default function RadioAdd(props) {
   const [price, setPrice] = useState(props.radio.price); 
   const [comment, setComment] = useState(props.radio.comment);
   const [radioName, setRadioName] = useState(props.radio.radio_name);
-  const [datePrevu, setDatePrevu] = useState(props.radio.date_prevu);
-  const [dateRealised, setDateRealised] = useState(props.radio.date_rdv);
+  const [datePrevu, setDatePrevu] = useState(props.radio.date_prevu || (new Date()).toISOString().substr(0,10));
+  const [dateRealised, setDateRealised] = useState(props.radio.date_rdv || (new Date()).toISOString().substr(0,10));
   const [interpretationLabo, setInterpretationLabo] = useState(props.radio.interpretation_labo);
   const [interpretationDr, setInterpretationDr] = useState(props.radio.interpretation_medecin);
   const [fileList, setFileList] = useState(props.radio.attachements);
@@ -137,9 +138,10 @@ export default function RadioAdd(props) {
         }
         const url = `${API_URL}/radios/${radioId}/benif/${props.benif}/upload/${fileList[0].name}`
         axiosInstance.post(url, formData).then(response => response.data)
-        .then((result) => { 
-          closeModal();}
-        );
+        .then((result) => { closeModal();}
+        , () => {
+          toast.error('fichier tres large');
+        })
       }
     } else {
       closeModal() 

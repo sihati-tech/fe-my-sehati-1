@@ -6,6 +6,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import { CircularProgress } from '@material-ui/core';
 import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -42,9 +44,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 export default function ConsultationAdd(props) {
+  const [status, setStatus] = useState(props.ordonnance.ordonnance_status || 'Later');
   const [loading, setLoading] = useState(false);
   const [consultation, setConsultation] = useState(props.ordonnance.consultation);
-  const [dateRDV, setDateRDV] = useState(props.ordonnance.date_rdv);
+  const [dateRDV, setDateRDV] = useState(props.ordonnance.date_rdv || (new Date()).toISOString().substr(0,10));
   const [ordonnanceName, setOrdonnanceName] = useState(props.ordonnance.ordonnance_name);
   const [price, setPrice] = useState(props.ordonnance.price);
   const [commentPatient, setCommentPatient] = useState(props.ordonnance.comment);
@@ -71,6 +74,7 @@ export default function ConsultationAdd(props) {
         ordonnance_name: ordonnanceName,
         date_rdv: dateRDV,
         price: price,
+        ordonnance_status: status,
         consultation: consultation,
         comment_medecin: comment,
         comment: commentPatient,
@@ -88,6 +92,7 @@ export default function ConsultationAdd(props) {
         ordonnance_name: ordonnanceName,
         date_rdv: dateRDV,
         price: price,
+        ordonnance_status: status,
         consultation: consultation,
         comment_medecin: comment,
         comment: commentPatient,
@@ -129,6 +134,10 @@ export default function ConsultationAdd(props) {
     }
     setFileList(array);
   }
+
+  function handleChangeStatus(event) {
+    setStatus(event.target.value);
+  };
   return (
     <Modal
         isOpen={props.isOpen}
@@ -183,7 +192,17 @@ export default function ConsultationAdd(props) {
             <TextField margin="normal" fullWidth label="prix" name="firstName"  value={price} onChange={event => setPrice(event.target.value)} />
             <TextField margin="normal" fullWidth label="commentaire patient" name="firstName"  value={commentPatient} onChange={event => setCommentPatient(event.target.value)} />
             <TextField margin="normal" fullWidth label="commentaire medecin" name="firstName"  value={comment} onChange={event => setComment(event.target.value)} />
-
+            <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={status}
+                onChange={handleChangeStatus}
+              >
+                
+                <MenuItem value={'Later'}>A venir</MenuItem>
+                <MenuItem value={'InProgress'}>En cours</MenuItem>
+                <MenuItem value={'Done'}>Terminé</MenuItem>
+              </Select>
             {
             (fileList && fileList.length > 0) ?
               (fileList).map((item, index) => {

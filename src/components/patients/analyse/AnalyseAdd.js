@@ -54,8 +54,8 @@ export default function AnalyseAdd(props) {
   const [price, setPrice] = useState(props.analyse.price); 
   const [comment, setComment] = useState(props.analyse.comment);
   const [analyseName, setAnalyseName] = useState(props.analyse.analyse_name);
-  const [datePrevu, setDatePrevu] = useState(props.analyse.date_prevu);
-  const [dateRealised, setDateRealised] = useState(props.analyse.date_rdv);
+  const [datePrevu, setDatePrevu] = useState(props.analyse.date_prevu || (new Date()).toISOString().substr(0,10));
+  const [dateRealised, setDateRealised] = useState(props.analyse.date_rdv || (new Date()).toISOString().substr(0,10));
   const [interpretationLabo, setInterpretationLabo] = useState(props.analyse.interpretation_labo);
   const [interpretationDr, setInterpretationDr] = useState(props.analyse.interpretation_medecin);
   const [fileList, setFileList] = useState(props.analyse.attachements);

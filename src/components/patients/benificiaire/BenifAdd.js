@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 export default function BenifAdd(props) {
   const [firstName, setFirstName] = useState(props.benif.first_name);
   const [lastName, setLastName] = useState(props.benif.last_name);
-  const [birthDate, setBirthDate] = useState(props.benif.birth_date);
+  const [birthDate, setBirthDate] = useState(props.benif.birth_date || (new Date()).toISOString().substr(0,10));
   const [familyLink, setFamilyLink] = useState(props.benif.family_link);
   const [sex, setSex] = useState(props.benif.sex);
   const [adresse, setAdresse] = useState(props.benif.adresse);
@@ -119,7 +119,9 @@ export default function BenifAdd(props) {
           <div className={'content-modal'}>
             <TextField margin="normal" fullWidth label="Nom*" name="lastName" value={lastName} onChange={event => setLastName(event.target.value)} />
             <TextField margin="normal" fullWidth label="Prenom*" name="firstName"  value={firstName} onChange={event => setFirstName(event.target.value)} />
-            <TextField margin="normal" fullWidth label="Date de naissance*" name="firstName"  value={birthDate} onChange={event => setBirthDate(event.target.value)} />
+            <TextField id="date" label="Date de naissance*" type="date" value={birthDate}
+              onChange={event => setBirthDate(event.target.value)}
+              InputLabelProps={{ shrink: true }} />
             <TextField margin="normal" fullWidth label="Lien de parenté*" name="firstName"  value={familyLink} onChange={event => setFamilyLink(event.target.value)} />
             <TextField margin="normal" fullWidth label="Sexe" name="firstName"  value={sex} onChange={event => setSex(event.target.value)} />
             <TextField margin="normal" fullWidth label="adresse" name="firstName"  value={adresse} onChange={event => setAdresse(event.target.value)} />

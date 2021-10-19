@@ -54,9 +54,9 @@ export default function ConsultationAdd(props) {
   const [consultationName, setConsultationName] = useState(props.consultation.consultation_name);
   const [consultationDesc, setConsultationDesc] = useState(props.consultation.consultationDesc);
   const [price, setPrice] = useState(props.consultation.price);
-  const [dateRdv, setDateRdv] = useState(props.consultation.date_rdv);
+  const [dateRdv, setDateRdv] = useState(props.consultation.date_rdv || (new Date()).toISOString().substr(0,10));
   const [timeRdv, setTimeRdv] = useState(props.consultation.time_rdv);
-  const [dateConsultation, setDateConsultation] = useState(props.consultation.date_consultation);
+  const [dateConsultation, setDateConsultation] = useState(props.consultation.date_consultation || (new Date()).toISOString().substr(0,10));
   const [commentDr, setCommentDr] = useState(props.consultation.commentaire_medecin);
   const [comment, setComment] = useState(props.consultation.commentaire);
   const [medecin, setMedecin] = useState(props.consultation.medecin);

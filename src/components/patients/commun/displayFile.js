@@ -3,6 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from 'react-modal';
 import axiosInstance from '../../../services/httpInterceptor' 
 import "./ConsultationAdd.scss";
+
+import { CircularProgress } from '@material-ui/core';
 import { Document, Page, pdfjs   } from "react-pdf";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -44,6 +46,7 @@ export default function DisplayFile(props) {
   const [fileJson, setFileJson] = useState(props.fileJson);
   const [file64, setFile64] = useState(null);
   const [numPages, setNumPages] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect( () => {
     getFile(fileJson)
@@ -52,9 +55,13 @@ export default function DisplayFile(props) {
     props.onChangeFile(true);
   }
   function getFile(file) {
+    setLoading(true);
     const url = `${API_URL}/files/download`;
     axiosInstance.post(url, file).then(response => response.data)
-    .then((result) => {setFile64(result)}
+    .then((result) => {
+      setFile64(result)
+      setLoading(false);
+    }
     );
   }
 
@@ -76,26 +83,34 @@ export default function DisplayFile(props) {
             <div className="file__header-close">
             </div>
           </div>
+          
 
-          <div className="file__body"> 
-          {
-            fileJson.mimeType === "application/pdf" ?
-            <div>
-            <Document className="pdf-content"
-              file={`data:${fileJson.mimeType};base64,${file64}`}
-              onLoadSuccess={onDocumentLoadSuccess}
-                >
-                  {Array.apply(null, Array(numPages))
-                  .map((x, i)=>i+1)
-                  .map(page => <Page pageNumber={page}/>)}
-            </Document>
+          { loading && 
+            <div className="file__body center-loader"> 
+              <CircularProgress size={35} />
             </div>
-
-            :
-            <img src={`data:${fileJson.mimeType};base64,${file64}`} className="image-content"/>
           }
 
-          </div>
+          { ! loading && 
+          <div className="file__body"> 
+            {
+              fileJson.mimeType === "application/pdf" ?
+              <div>
+              <Document className="pdf-content"
+                file={`data:${fileJson.mimeType};base64,${file64}`}
+                onLoadSuccess={onDocumentLoadSuccess}
+                  >
+                    {Array.apply(null, Array(numPages))
+                    .map((x, i)=>i+1)
+                    .map(page => <Page pageNumber={page}/>)}
+              </Document>
+              </div>
+
+              :
+              <img src={`data:${fileJson.mimeType};base64,${file64}`} className="image-content"/>
+            }
+            </div>
+          }
         </Modal>
   );
 }

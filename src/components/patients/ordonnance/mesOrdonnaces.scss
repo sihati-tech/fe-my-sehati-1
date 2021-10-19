@@ -99,3 +99,14 @@
   cursor: pointer;
   text-decoration: underline;
 }
+.right-status {
+  text-align: right;
+}
+.status-progress {
+  color: orange;
+  font-weight: bold !important;
+}
+.status-done {
+  color: green;
+  font-weight: bold !important;
+}

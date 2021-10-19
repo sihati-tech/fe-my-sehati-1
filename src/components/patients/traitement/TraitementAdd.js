@@ -65,8 +65,8 @@ export default function TraitementAdd(props) {
   const [ordonnanceList, setOrdonnanceList] = useState([]);
   const [ordonnance, setOrdonnance] = useState([]);
   const [pathologie, setPathologie] = useState(props.traitement.pathologie);
-  const [startDate, setStartDate] = useState(props.traitement.start_date);
-  const [endDate, setEndDate] = useState(props.traitement.end_date);
+  const [startDate, setStartDate] = useState(props.traitement.start_date || (new Date()).toISOString().substr(0,10));
+  const [endDate, setEndDate] = useState(props.traitement.end_date || (new Date()).toISOString().substr(0,10));
   const [duration, setDuration] = useState(props.traitement.traitement_duration);
   const [restDuration, setRestDuration] = useState(props.traitement.rest_duration);
   const [subTraitements, setSubTraitements] = useState(props.traitement.subTraitments);

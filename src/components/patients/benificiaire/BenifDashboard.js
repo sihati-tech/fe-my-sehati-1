@@ -56,7 +56,7 @@ return (
   <HeaderComponent></HeaderComponent>
   <div className="container-body">
     <div className="container-title">Bienvenue dans votre tableau de bord</div>
-  <div className="container-subtitle">Mr : {firstName} {lastName}</div>
+  <div className="container-subtitle"> : {firstName} {lastName}</div>
 
         <div className="container-widget-line">
           <div className="container-widget" onClick={(e) => navigateTo(id + '/consultations')}>

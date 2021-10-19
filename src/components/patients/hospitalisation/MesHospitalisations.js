@@ -41,7 +41,7 @@ export default function MesHospitalisations() {
           Mes Hospitalisation
         </div>
         <div className="container-subtitle">
-          liste des hospitalisations pour Mr XXXX XXXX planifiés
+          liste des hospitalisations pour  XXXX XXXX planifiés
         </div>
       <div className={classes.root}>
       <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>

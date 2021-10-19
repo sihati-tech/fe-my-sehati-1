@@ -8,12 +8,14 @@ import Modal from 'react-modal';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
 
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { CircularProgress } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import axiosInstance from '../../../services/httpInterceptor' 
 import "./RadioAdd.scss";
+import 'react-toastify/dist/ReactToastify.css';
+
 const customStyles = {
   content : {
     top                   : '50%',
@@ -152,12 +154,18 @@ export default function RadioAdd(props) {
     setFileList(fileList.filter(item => item.name !== file.name));
   }
   function uploadFile(event) {
+    const file = event[0];
+    if (file.size > 5000000) {
+      console.log('fichier tres large')
+      toast.error('fichier tres large');
+      return 
+    }
+    console.log('size ', file.size)
     const array = []
     for (let i=0; i<event.length; i++) {
       array.push(event[i])
     }
     setFileList(array);
-    console.log('file ', array)
   }
   return (
     <Modal
@@ -184,6 +192,7 @@ export default function RadioAdd(props) {
 
 
 <Container component="main" maxWidth="xs">
+<ToastContainer />
       <CssBaseline />
       <div className={classes.paper}>
         <form className={classes.form} >
@@ -265,7 +274,7 @@ export default function RadioAdd(props) {
                   type="file" 
                   onChange={(e) => uploadFile(e.target.files)}/>
                   
-                  <span>Parcourir mon ordinateur</span>
+                  <span>Parcourir mon ordinateur (Max 5M)</span>
               </div>
           </div> : null
             }

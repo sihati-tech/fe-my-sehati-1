@@ -183,7 +183,7 @@ export default function MesConsultations() {
           Mes Consultations 
         </div>
         <div className="container-subtitle">
-          liste des Consultations pour  <b>Mr {firstName} {lastName}  </b>planifiés
+          liste des Consultations pour  <b> {firstName} {lastName}  </b>planifiés
         </div>
       
 

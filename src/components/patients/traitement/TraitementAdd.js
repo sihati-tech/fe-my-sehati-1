@@ -355,7 +355,7 @@ export default function TraitementAdd(props) {
                 type="file" 
                 onChange={(e) => uploadFile(e.target.files)}/>
                 
-                <span>Parcourir mon ordinateur</span>
+                <span>Parcourir mon ordinateur (Max 5M)</span>
             </div>
             <div className="btn-action" onClick={(e) => addSubTraitement()}> <FaCalendarPlus>  </FaCalendarPlus>Ajouter sous traitement</div>
             {renderSubTraitements()}

@@ -187,7 +187,7 @@ export default function MesRadios() {
           Mes Radios
         </div>
         <div className="container-subtitle">
-          liste des Radios pour Mr {firstName} {lastName} planifiés
+          liste des Radios pour  {firstName} {lastName} planifiés
         </div>
 
         <div className="container-right-actions">

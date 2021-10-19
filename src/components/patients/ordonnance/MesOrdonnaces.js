@@ -176,7 +176,7 @@ export default function MesOrdonnaces() {
           Mes Ordonnances
         </div>
         <div className="container-subtitle">
-          liste des ordonnance pour Mr {firstName} {lastName}  planifiés
+          liste des ordonnance pour  {firstName} {lastName}  planifiés
         </div>
       
 

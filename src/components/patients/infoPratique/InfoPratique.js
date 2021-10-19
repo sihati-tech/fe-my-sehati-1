@@ -41,7 +41,7 @@ export default function InfoPratique() {
           Informations pratiques
         </div>
         <div className="container-subtitle">
-          Mr XXXX YYYY
+           XXXX YYYY
         </div>
       <div className={classes.root}>
         

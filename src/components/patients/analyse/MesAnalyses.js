@@ -326,7 +326,7 @@ export default function MesAnalyses() {
           Mes Analyses
         </div>
         <div className="container-subtitle">
-          liste des Analyses pour Mr {firstName} {lastName}  planifiés
+          liste des Analyses pour  {firstName} {lastName}  planifiés
         </div>
       
 

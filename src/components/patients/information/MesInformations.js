@@ -41,7 +41,7 @@ export default function MesInformations() {
           Mes Informations
         </div>
         <div className="container-subtitle">
-          liste des Consultations pour Mr XXXX XXXX planifiés
+          liste des Consultations pour  XXXX XXXX planifiés
         </div>
       <div className={classes.root}>
       <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>

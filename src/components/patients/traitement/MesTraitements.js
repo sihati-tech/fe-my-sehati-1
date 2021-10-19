@@ -199,7 +199,7 @@ export default function MesTraitements() {
           Mes Traitements
         </div>
         <div className="container-subtitle">
-          liste des Traitements pour Mr {firstName} {lastName}  planifiés
+          liste des Traitements pour  {firstName} {lastName}  planifiés
         </div>
       
 

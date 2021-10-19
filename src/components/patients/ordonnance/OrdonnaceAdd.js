@@ -216,7 +216,7 @@ export default function ConsultationAdd(props) {
                  type="file" 
                  onChange={(e) => uploadFile(e.target.files)}/>
                 
-                 <span>Parcourir mon ordinateur</span>
+                 <span>Parcourir mon ordinateur (Max 5M)</span>
             </div>
           </div>
           <div className={'footer-modal'}>

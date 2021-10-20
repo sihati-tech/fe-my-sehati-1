@@ -22,6 +22,8 @@ import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-d
 import 'react-toastify/dist/ReactToastify.css';
 import { bindActionCreators } from 'redux';
 import { windowNav } from "./actions/appName";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const mapStateToProps = state => ({
   ...state
@@ -58,6 +60,7 @@ class App extends Component {
     const createRedirect = to => () => <Redirect to={to} />
     return (
       <Router>
+        <ToastContainer />
         <div className={"appContainer"}>
           <Switch>
                 <Route exact path="/Login">

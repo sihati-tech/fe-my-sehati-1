@@ -6,15 +6,14 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Modal from 'react-modal';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { FaTrash, FaArrowLeft, FaCalendarPlus} from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { CircularProgress } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import axiosInstance from '../../../services/httpInterceptor' 
 import "./RadioAdd.scss";
-import 'react-toastify/dist/ReactToastify.css';
 
 const customStyles = {
   content : {
@@ -142,7 +141,7 @@ export default function RadioAdd(props) {
         axiosInstance.post(url, formData).then(response => response.data)
         .then((result) => { closeModal();}
         , () => {
-          toast.error('fichier tres large');
+          toast.error('fichier trés large');
         })
       }
     } else {
@@ -156,11 +155,9 @@ export default function RadioAdd(props) {
   function uploadFile(event) {
     const file = event[0];
     if (file.size > 5000000) {
-      console.log('fichier tres large')
-      toast.error('fichier tres large');
+      toast.error('fichier trés large');
       return 
     }
-    console.log('size ', file.size)
     const array = []
     for (let i=0; i<event.length; i++) {
       array.push(event[i])
@@ -192,7 +189,6 @@ export default function RadioAdd(props) {
 
 
 <Container component="main" maxWidth="xs">
-<ToastContainer />
       <CssBaseline />
       <div className={classes.paper}>
         <form className={classes.form} >

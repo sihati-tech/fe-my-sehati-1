@@ -11,6 +11,7 @@ import { analyseConfig} from './analyseConfig.js';
 
 import { CircularProgress } from '@material-ui/core';
 
+import { toast } from 'react-toastify';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import axiosInstance from '../../../services/httpInterceptor' 
@@ -147,6 +148,11 @@ export default function AnalyseAdd(props) {
     setFileList(fileList.filter(item => item.name !== file.name));
   }
   function uploadFile(event) {
+    const file = event[0];
+    if (file.size > 5000000) {
+      toast.error('fichier trés large');
+      return 
+    }
     const array = []
     for (let i=0; i<event.length; i++) {
       array.push(event[i])

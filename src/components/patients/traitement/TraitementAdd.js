@@ -16,6 +16,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+import { toast } from 'react-toastify';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import axiosInstance from '../../../services/httpInterceptor' 
@@ -154,6 +155,11 @@ export default function TraitementAdd(props) {
     setFileList(fileList.filter(item => item.name !== file.name));
   }
   function uploadFile(event) {
+    const file = event[0];
+    if (file.size > 5000000) {
+      toast.error('fichier trés large');
+      return 
+    }
     const array = []
     for (let i=0; i<event.length; i++) {
       array.push(event[i])

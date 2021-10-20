@@ -8,6 +8,7 @@ import Modal from 'react-modal';
 import axiosInstance from '../../../services/httpInterceptor' 
 import { FaTrash } from 'react-icons/fa';
 
+import { toast } from 'react-toastify';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -112,6 +113,11 @@ export default function ConsultationAdd(props) {
     setFileList(fileList.filter(item => item.name !== file.name));
   }
   function uploadFile(event) {
+    const file = event[0];
+    if (file.size > 5000000) {
+      toast.error('fichier trés large');
+      return 
+    }
     const array = []
     for (let i=0; i<event.length; i++) {
       array.push(event[i])

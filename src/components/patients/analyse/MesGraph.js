@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-// import { Chart } from 'react-charts'
+import { Chart } from 'react-charts'
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from 'react-modal';
 import "./mesAnalyses.scss";
@@ -75,7 +75,7 @@ export default function MesGraph(props) {
           </div>
 
           <div className="graph__body"> 
-          {/* <Chart data={data} axes={axes} /> */}
+          <Chart data={data} axes={axes} />
 
           
           </div>

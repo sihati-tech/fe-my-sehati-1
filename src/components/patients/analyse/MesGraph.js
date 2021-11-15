@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-import { Chart } from 'react-charts'
+// import { Chart } from 'react-charts'
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from 'react-modal';
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, ReferenceLine, ReferenceArea,
+  ReferenceDot, Tooltip, CartesianGrid, Legend, Brush, ErrorBar, AreaChart, Area,
+  Label, LabelList } from 'recharts';
 import "./mesAnalyses.scss";
 const customStyles = {
   content : {
@@ -41,27 +44,11 @@ export default function MesGraph(props) {
   function closeModal() {
     props.onChangeGraph(true);
   }
-  
-  const data = React.useMemo(
-    () => [
-      {
-        label: 'graph',
-        data: props.graphData.map(element => {
-          return [new Date(element.date), element.value]
-        }),
-      }
-    ],
-    []
-  )
- 
-  const axes = React.useMemo(
-    () => [
-      { primary: true, type: 'time', position: 'bottom'},
-      { type: 'linear', position: 'left' }
-    ],
-    []
-  )
-  
+  const data = props.graphData.sort(function(a,b){ 
+    if(a.date>b.date){return 1;} 
+      if(a.date<b.date){return -1;}
+      return 0;
+   });
   return (
     <Modal
         isOpen={true}
@@ -75,9 +62,30 @@ export default function MesGraph(props) {
           </div>
 
           <div className="graph__body"> 
-          <Chart data={data} axes={axes} />
-
-          
+          {/* <Chart data={data} axes={axes} /> */}
+         
+          <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          height={300}
+          data={data}
+          margin={{
+            top: 0,
+            right: 0,
+            left: 0,
+            bottom: 0,
+          }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" style={{
+              fontSize: '12px',
+              transform: `rotate('45deg')`,
+              fontFamily: 'Times New Roman',
+          }}/>
+          <YAxis />
+          <Tooltip />
+          <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
+        </LineChart>
+      </ResponsiveContainer>
           </div>
           <div className="graph__footer"> 
            Evolution de {props.codeGraph.label}

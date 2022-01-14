@@ -24,7 +24,7 @@ export default function PatientDashboard() {
   }, []);
 
   function refreshList () {
-    const url = `${API_URL}/benificiares`;
+    const url = `${API_URL}/benificiares?patient=${localStorage.patient}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
       setBenifList(result)
@@ -59,7 +59,7 @@ export default function PatientDashboard() {
     refreshList();
   }
   function onConfirm(value) { 
-    const url = `${API_URL}/benificiares/${deleteBenifState}`;
+    const url = `${API_URL}/benificiares/${deleteBenifState}?patient=${localStorage.patient}`;
     axiosInstance.delete(url).then(response => response.data)
     .then((result) => {
       setIsOpenWarning(false)

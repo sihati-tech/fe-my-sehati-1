@@ -177,7 +177,7 @@ export default function MesAnalyses() {
   const [benif, setBenif] = useState({});
 
   useEffect( () => {
-    const url = `${API_URL}/benificiares/${id}` ;
+    const url = `${API_URL}/benificiares/${id}?patient=${localStorage.patient}` ;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => { 
       const benif = result[0];
@@ -230,7 +230,7 @@ export default function MesAnalyses() {
     setIsOpen(false) 
   }
   function refreshList () {
-    const url = `${API_URL}/analyses/benif/${id}`;
+    const url = `${API_URL}/analyses/benif/${id}?patient=${localStorage.patient}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
       setConsultationList(result);
@@ -271,7 +271,7 @@ export default function MesAnalyses() {
   }
   function onConfirm(value) { 
     setIsOpenWarning(false);
-    const url = `${API_URL}/analyses/${analyse._id}`;
+    const url = `${API_URL}/analyses/${analyse._id}?patient=${localStorage.patient}`;
     axiosInstance.delete(url).then(response => response.data)
     .then((result) => {
       refreshList()

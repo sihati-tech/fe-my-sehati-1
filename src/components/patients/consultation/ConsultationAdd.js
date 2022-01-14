@@ -97,7 +97,7 @@ export default function ConsultationAdd(props) {
         for (var x = 0; x < fileList.length; x++) {
           formData.append("file", fileList[x], fileList[x].name);
         }
-        const url = `${API_URL}/consultation/${analyseId}/benif/${props.benif}/upload/${fileList[0].name}`
+        const url = `${API_URL}/consultation/${analyseId}/benif/${props.benif}/upload/${fileList[0].name}?patient=${localStorage.patient}`
         axiosInstance.post(url, formData).then(response => response.data)
         .then((result) => { 
           closeModal();
@@ -139,7 +139,7 @@ export default function ConsultationAdd(props) {
         consultation_status: status,
         _id: props.consultation._id
       }
-      const url = `${API_URL}/consultation/benif/${props.benif}`;
+      const url = `${API_URL}/consultation/benif/${props.benif}?patient=${localStorage.patient}`;
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const analyseId = result._id;
@@ -159,7 +159,7 @@ export default function ConsultationAdd(props) {
         commentaire: comment,
         price: price,
       }
-      const url = `${API_URL}/consultation/benif/${props.benif}`;
+      const url = `${API_URL}/consultation/benif/${props.benif}?patient=${localStorage.patient}`;
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const analyseId = result._id;

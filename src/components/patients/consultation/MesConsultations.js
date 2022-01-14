@@ -63,7 +63,7 @@ export default function MesConsultations() {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect( () => {
-    const url = `${API_URL}/benificiares/${id}` ;
+    const url = `${API_URL}/benificiares/${id}?patient=${localStorage.patient}` ;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => { 
       const benif = result[0];
@@ -112,7 +112,7 @@ export default function MesConsultations() {
   }
   
   function refreshList () {
-    const url = `${API_URL}/consultation/benif/${id}`;
+    const url = `${API_URL}/consultation/benif/${id}?patient=${localStorage.patient}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
         setConsultationList(result);
@@ -131,7 +131,7 @@ export default function MesConsultations() {
   }
   function onConfirm(value) { 
     setIsOpenWarning(false);
-    const url = `${API_URL}/consultation/${consultation._id}`;
+    const url = `${API_URL}/consultation/${consultation._id}?patient=${localStorage.patient}`;
     axiosInstance.delete(url).then(response => response.data)
     .then((result) => {
       refreshList()

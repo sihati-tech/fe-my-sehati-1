@@ -61,7 +61,7 @@ export default function MesOrdonnaces() {
 
 
   useEffect( () => {
-    const url = `${API_URL}/benificiares/${id}` ;
+    const url = `${API_URL}/benificiares/${id}?patient=${localStorage.patient}` ;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => { 
       const benif = result[0];
@@ -90,7 +90,7 @@ export default function MesOrdonnaces() {
   }
 
   function refreshList () {
-    const url = `${API_URL}/ordonnances/benif/${id}`;
+    const url = `${API_URL}/ordonnances/benif/${id}?patient=${localStorage.patient}`;
     axiosInstance.get(url).then(response => response.data)
     .then((result) => {
         setOrdonnanceList(result);
@@ -112,7 +112,7 @@ export default function MesOrdonnaces() {
   function onConfirm(value) { 
     console.log('ordonnance ', ordonnance)
     setIsOpenWarning(false);
-    const url = `${API_URL}/ordonnances/${ordonnance._id}`;
+    const url = `${API_URL}/ordonnances/${ordonnance._id}?patient=${localStorage.patient}`;
     axiosInstance.delete(url).then(response => response.data)
     .then((result) => {
       refreshList()

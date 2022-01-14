@@ -56,13 +56,13 @@ class App extends Component {
     // })
   }
   render() {
-    
     const createRedirect = to => () => <Redirect to={to} />
     return (
       <Router>
         <ToastContainer />
         <div className={"appContainer"}>
-          <Switch>
+          <Switch> 
+            
                 <Route exact path="/Login">
                   <Login />
                 </Route>
@@ -82,7 +82,10 @@ class App extends Component {
 
                 <Route exact path="/doctor/dashboard"> <DoctorDashboard /> </Route>
                 <Route exact path="/pharmacist/dashboard"> <PharmacistDashboard /> </Route>
-                <Route path="/*" component={createRedirect("/Login")} />
+                {
+                  localStorage.authenticated ? 
+                  <Route path="/*" component={createRedirect("/patient/dashboard")} /> : null
+                }
               </Switch>
           {/* <Route path="/patient/dashboard" component={PatientDashboard} />  */}
         </div>

@@ -31,7 +31,7 @@ export default function BenifDashboard() {
       const [notification, setNotification] = useState('');
 
       useEffect( () => {
-        const url = `${API_URL}/benificiares/${id}` ;
+        const url = `${API_URL}/benificiares/${id}?patient=${localStorage.patient}` ;
         axiosInstance.get(url).then(response => response.data)
         .then((result) => { 
           const benif = result[0];
@@ -39,7 +39,7 @@ export default function BenifDashboard() {
           setLastName(benif.last_name)
         }
         );
-        const urlNotif = `${API_URL}/benificiares/${id}/notifications` ;
+        const urlNotif = `${API_URL}/benificiares/${id}/notifications?patient=${localStorage.patient}` ;
         axiosInstance.get(urlNotif).then(response => response.data)
         .then((result) => { 
           setNotification(result)

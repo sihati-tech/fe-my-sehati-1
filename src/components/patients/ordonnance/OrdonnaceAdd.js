@@ -57,7 +57,7 @@ export default function ConsultationAdd(props) {
   const [fileList, setFileList] = useState(props.ordonnance.attachements);
   
   useEffect( () => {
-    const url = `${API_URL}/consultation/benif/${props.benif}` ;
+    const url = `${API_URL}/consultation/benif/${props.benif}?patient=${localStorage.patient}` ;
     axiosInstance.get(url).then(response => response.data)
     .then((lst) => { 
       setConsultationList(lst)
@@ -81,7 +81,7 @@ export default function ConsultationAdd(props) {
         comment: commentPatient,
         _id: props.ordonnance._id
       }
-      const url = `${API_URL}/ordonnances/benif/${props.benif}`
+      const url = `${API_URL}/ordonnances/benif/${props.benif}?patient=${localStorage.patient}`
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const ordonnanceId = result._id;
@@ -98,7 +98,7 @@ export default function ConsultationAdd(props) {
         comment_medecin: comment,
         comment: commentPatient,
       }
-      const url = `${API_URL}/ordonnances/benif/${props.benif}`
+      const url = `${API_URL}/ordonnances/benif/${props.benif}?patient=${localStorage.patient}`
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const ordonnanceId = result._id;
@@ -115,7 +115,7 @@ export default function ConsultationAdd(props) {
         for (var x = 0; x < fileList.length; x++) {
           formData.append("file", fileList[x], fileList[x].name);
         }
-        const url = `${API_URL}/ordonnances/${ordonnanceId}/benif/${props.benif}/upload/${fileList[0].name}`
+        const url = `${API_URL}/ordonnances/${ordonnanceId}/benif/${props.benif}/upload/${fileList[0].name}?patient=${localStorage.patient}`
         axiosInstance.post(url, formData).then(response => response.data)
         .then((result) => {
           closeModal(); }

@@ -63,7 +63,7 @@ export default function RadioAdd(props) {
   const [resultConclusion, setResultConclusion] = useState(props.radio.resultConclusion);
 
   useEffect( () => {
-    const url = `${API_URL}/ordonnances/benif/${props.benif}` ;
+    const url = `${API_URL}/ordonnances/benif/${props.benif}?patient=${localStorage.patient}` ;
     axiosInstance.get(url).then(response => response.data)
     .then((lst) => { 
       setOrdonnanceList(lst)
@@ -96,7 +96,7 @@ export default function RadioAdd(props) {
         result_interpretation: resultInterpretation,
       }
       console.log('props.benif ', dataToSend)
-      const url = `${API_URL}/radios/benif/${props.benif}`
+      const url = `${API_URL}/radios/benif/${props.benif}?patient=${localStorage.patient}`
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const radioId = result._id;
@@ -118,7 +118,7 @@ export default function RadioAdd(props) {
         result_conclusion: resultConclusion,
         result_interpretation: resultInterpretation,
       }
-      const url = `${API_URL}/radios/benif/${props.benif}`
+      const url = `${API_URL}/radios/benif/${props.benif}?patient=${localStorage.patient}`
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const radioId = result._id;
@@ -137,7 +137,7 @@ export default function RadioAdd(props) {
         for (var x = 0; x < fileList.length; x++) {
           formData.append("file", fileList[x], fileList[x].name);
         }
-        const url = `${API_URL}/radios/${radioId}/benif/${props.benif}/upload/${fileList[0].name}`
+        const url = `${API_URL}/radios/${radioId}/benif/${props.benif}/upload/${fileList[0].name}?patient=${localStorage.patient}`
         axiosInstance.post(url, formData).then(response => response.data)
         .then((result) => { closeModal();}
         , () => {

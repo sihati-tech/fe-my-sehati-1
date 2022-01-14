@@ -73,7 +73,7 @@ export default function TraitementAdd(props) {
   const [subTraitements, setSubTraitements] = useState(props.traitement.subTraitments);
 
   useEffect( () => {
-    const url = `${API_URL}/ordonnances/benif/${props.benif}` ;
+    const url = `${API_URL}/ordonnances/benif/${props.benif}?patient=${localStorage.patient}` ;
     axiosInstance.get(url).then(response => response.data)
     .then((lst) => { 
       setOrdonnanceList(lst)
@@ -100,7 +100,7 @@ export default function TraitementAdd(props) {
         interpretation_dr: interpretationDr,
         _id: props.traitement._id,
       }
-      const url = `${API_URL}/traitements/benif/${props.benif}`
+      const url = `${API_URL}/traitements/benif/${props.benif}?patient=${localStorage.patient}`
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const traitementId = result._id;
@@ -122,7 +122,7 @@ export default function TraitementAdd(props) {
         interpretation_dr: interpretationDr,
         _id: props.traitement._id,
       }
-      const url = `${API_URL}/traitements/benif/${props.benif}`
+      const url = `${API_URL}/traitements/benif/${props.benif}?patient=${localStorage.patient}`
       axiosInstance.post(url, dataToSend).then(response => response.data)
       .then((result) => { 
         const traitementId = result._id;
@@ -140,7 +140,7 @@ export default function TraitementAdd(props) {
         for (var x = 0; x < fileList.length; x++) {
           formData.append("file", fileList[x], fileList[x].name);
         }
-        const url = `${API_URL}/traitements/${traitementId}/benif/${props.benif}/upload/${fileList[0].name}`
+        const url = `${API_URL}/traitements/${traitementId}/benif/${props.benif}/upload/${fileList[0].name}?patient=${localStorage.patient}`
         axiosInstance.post(url, formData).then(response => response.data)
         .then((result) => { 
           closeModal();}

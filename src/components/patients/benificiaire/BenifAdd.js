@@ -82,7 +82,7 @@ export default function BenifAdd(props) {
       ssn: SSN
     }
     console.log('props.benif ', props.benif)
-    const url = props.benif._id ? `${API_URL}/benificiares/${props.benif._id}` : `${API_URL}/benificiares`;
+    const url = props.benif._id ? `${API_URL}/benificiares/${props.benif._id}` : `${API_URL}/benificiares?patient=${localStorage.patient}`;
     axiosInstance.post(url, dataToSend).then(response => response.data)
     .then((result) => { closeModal() }
     );

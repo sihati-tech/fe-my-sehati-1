@@ -56,7 +56,7 @@ export default function DisplayFile(props) {
   }
   function getFile(file) {
     setLoading(true);
-    const url = `${API_URL}/files/download`;
+    const url = `${API_URL}/files/download?patient=${localStorage.patient}`;
     axiosInstance.post(url, file).then(response => response.data)
     .then((result) => {
       setFile64(result)

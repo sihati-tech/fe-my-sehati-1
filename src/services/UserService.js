@@ -37,10 +37,11 @@ function addOrUpdateUser(_kc) {
       };
       
       axiosInstance.post(`${process.env.REACT_APP_URL}/patients`, data)
+      .then(response => response.data)
       .then(patient => {
         console.log('patientd ', patient)
         localStorage.setItem('patient', patient._id);
-        addOrUpdatePatient(patient.data)
+        addOrUpdatePatient(patient)
       })
     } else {
       console.log('res res res ', res)

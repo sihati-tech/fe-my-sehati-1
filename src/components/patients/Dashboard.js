@@ -24,12 +24,14 @@ export default function PatientDashboard() {
   }, []);
 
   function refreshList () {
-    const url = `${API_URL}/benificiares?patient=${localStorage.patient}`;
-    axiosInstance.get(url).then(response => response.data)
-    .then((result) => {
-      setBenifList(result)
-      }
-    );
+    setTimeout(() => {
+      const url = `${API_URL}/benificiares?patient=${localStorage.patient}`;
+      axiosInstance.get(url).then(response => response.data)
+      .then((result) => {
+        setBenifList(result)
+        }
+      );
+    }, 1000);
   }
   function navigateTo (url) {
     history.push(url);

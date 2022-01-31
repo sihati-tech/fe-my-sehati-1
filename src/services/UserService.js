@@ -34,6 +34,8 @@ function addOrUpdateUser(_kc) {
         email_address: _kc.tokenParsed.email,
         last_name: _kc.tokenParsed.family_name,
         first_name: _kc.tokenParsed.given_name,
+        phone_number: _kc.tokenParsed.mobile,
+        dob: _kc.tokenParsed.dob,
       };
       
       axiosInstance.post(`${process.env.REACT_APP_URL}/patients`, data)

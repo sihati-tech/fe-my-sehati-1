@@ -1,11 +1,18 @@
 import React from "react";
 import "./HeaderComponent.scss";
 import { Nav, Navbar } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import UserService from "../../../services/UserService";
 import LoginPng from '../../../assets/images/heart.png';
 
 
 export default function HeaderComponent() {
+  const history = useHistory();
 
+  function logOut() {
+    UserService.doLogout()
+    history.push('/');
+  }
   return (
       <div className="container-header">
       <Navbar collapseOnSelect expand="lg" variant="dark">
@@ -37,7 +44,7 @@ export default function HeaderComponent() {
         </Nav>
         <Nav>
           <Nav.Link href="/patient/pratique">Info pratiques</Nav.Link>
-          <Nav.Link eventKey={2} href="/login">
+          <Nav.Link eventKey={2} onClick={logOut}>
             Déconnexion
           </Nav.Link>
         </Nav>

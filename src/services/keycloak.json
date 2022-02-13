@@ -1,6 +1,6 @@
 {
   "realm": "medicale",
-  "auth-server-url": "https://412d-2a01-e0a-8c5-f780-1538-f802-b8a7-b954.ngrok.io/auth/",
+  "auth-server-url": "https://auth-sihati.com:8443/auth",
   "ssl-required": "external",
   "resource": "front-mysihati",
   "public-client": true,

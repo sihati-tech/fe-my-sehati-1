@@ -1,6 +1,6 @@
 {
   "realm": "medicale",
-  "auth-server-url": "http://localhost:8080/auth/",
+  "auth-server-url": "https://auth-mysihati:8443/auth/",
   "ssl-required": "external",
   "resource": "front-mysihati",
   "public-client": true,
